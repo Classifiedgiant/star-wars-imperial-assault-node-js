@@ -25,24 +25,44 @@ t.textures[i]=new h.Texture(c,s,d,l,a[i].rotated?2:0),h.utils.TextureCache[i]=t.
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],2:[function(require,module,exports){
 
-},{}],3:[function(require,module,exports){
-let PIXI = require ("../external/pixi.min.js");
-let LevelModelClass = require("./model/levelModel.js");
-let LevelViewClass = require("./view/levelView.js");
+let GameModelClass = require ("./model/gameModel.js");
 
+function App()
+{
+    this.models = {
+        GameModel: new GameModelClass()
+    };
+
+    this.states = {
+        SELECT_DEPLOYMENT_CARDS: "SELECT_DEPLOYMENT_CARDS",
+        SELECT_DEPLOYMENTS_PLACE: "SELECT_DEPLOYMENT_PLACE"
+    };
+}
+
+App.prototype.setupGame = function()
+{
+
+};
+
+module.exports = App;
+},{"./model/gameModel.js":6}],3:[function(require,module,exports){
+let PIXI = require ("../external/pixi.min.js");
+let AppClass = require ("./app.js");
 let renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.view);
 let stage = new PIXI.Container();
 
 let updateTick = 30;
 
-let levelModel = null;
-let levelView = null;
+let app = null;
+//let levelView = null;
 
 function initFunc()
 {
-	levelModel = new LevelModelClass();
-	levelView = new LevelViewClass(levelModel, stage);
+    app = new AppClass();
+    app.setupGame();
+	//levelModel = new LevelModelClass();
+	//levelView = new LevelViewClass(levelModel, stage);
 }
 
 function updateFunc()
@@ -53,10 +73,141 @@ function updateFunc()
 
 initFunc();
 setTimeout(updateFunc, 30);
+},{"../external/pixi.min.js":1,"./app.js":2}],4:[function(require,module,exports){
+function DeploymentCardModel(
+    name,
+    affiliation,
+    deployCost,
+    isUnique,
+    gridSize,
+    health,
+    speed,
+    defenseDice,
+    attackType,
+    attackDice,
+    traits,
+    naturalAbilities,
+    passiveAbilities,
+    actionAbilities)
+{
+    this.name = name;
+    this.affiliation = affiliation;
+    this.deployCost = deployCost;
+    this.isUnique = isUnique;
+    this.gridSize = gridSize;   
+    this.baseHealth = health;
+    this.baseSpeed = speed;
 
+    this.currentHealth = this.maxHealth;
+    this.currentSpeed = this.baseSpeed;
+    this.defenseDice = defenseDice;
+    this.attackType = attackType;
+    this.attackDice = attackDice;
 
-//renderer.render(stage);
-},{"../external/pixi.min.js":1,"./model/levelModel.js":4,"./view/levelView.js":5}],4:[function(require,module,exports){
+    this.traits = traits;
+    this.naturalAbilities = naturalAbilities;
+    this.passiveAbilities = passiveAbilities;
+    this.actionAbilities = actionAbilities;
+}
+
+module.exports = DeploymentCardModel;
+},{}],5:[function(require,module,exports){
+function DeploymentCardTypesUtil()
+{
+}
+
+DeploymentCardTypesUtil.prototype.GetAffiliations = function()
+{
+    return {
+        REBEL: "Rebel Allicance",
+        EMPIRE: "Empire",
+        BOUNTY_HUNTERS: "Bounty Hunters"
+    };
+};
+
+DeploymentCardTypesUtil.prototype.GetDefenseDiceTypes = function()
+{
+    return {
+        BLACK: "Black",
+        WHITE: "White"
+    };
+};
+
+DeploymentCardTypesUtil.prototype.GetAttackTypes = function()
+{
+    return {
+        MELEE: "Melee",
+        RANGE: "Range"
+    };
+};
+
+DeploymentCardTypesUtil.prototype.GetAttackDiceTypes = function()
+{
+    return {
+        RED: "Red",
+        YELLOW: "Yellow",
+        BLUE: "Blue",
+        GREEN: "Green"
+    };
+};
+
+module.exports = DeploymentCardTypesUtil;
+},{}],6:[function(require,module,exports){
+let DeploymentCardsModelClass = require("./deploymentCardModel.js");
+let DeploymentCardsTypeUtilClass = require("./deploymentCardTypesUtil.js");
+
+function GameModel()
+{
+    this.imperial = {commandCards: null, deploymentCards: []};
+    this.rebel = {commandCards: null, deploymentCards: []};
+}
+
+GameModel.prototype.createArmies = function()
+{
+    let defenseDice = DeploymentCardsTypeUtilClass.GetDefenseDiceTypes();
+    let attackTypes = DeploymentCardsTypeUtilClass.GetAttackType();
+    let attackDice = DeploymentCardsTypeUtilClass.GetAttackDiceTypes();
+
+    // create Luke Skywalker
+    let lukeSkywalker = new deploymentCardModel(
+        "Luke Skywalker",
+        DeploymentCardsTypeUtilClass.GetAffiliations().REBEL,
+        10,
+        true,
+        [1, 1],
+        10,
+        5,
+        [defenseDice.WHITE],
+        attackTypes.RANGE,
+        [attackDice.BLUE, attackDice.GREEN, attackDice.YELLOW],
+        ["Force User"], // could be placed into a group somewhere
+        null,
+        null,
+        null);
+
+    // empire
+    let darthVader = new deploymentCardModel(
+        "Darth Vader",
+        DeploymentCardsTypeUtilClass.GetAffiliations().EMPIRE,
+        18,
+        true,
+        [1,1],
+        16,
+        4,
+        [defenseDice.BLACK,defenseDice.BLACK],
+        attackTypes.MELEE,
+        [attackDice.RED, attackDice.RED, attackDice.YELLOW],
+        ["Force User", "Leader", "Brawler"],
+        null,
+        null, 
+        null);
+
+    this.rebel.deploymentCards.push(lukeSkywalker);
+    this.imperial.deploymentCards.push(darthVader);
+};
+
+module.exports = GameModel;
+},{"./deploymentCardModel.js":4,"./deploymentCardTypesUtil.js":5}],7:[function(require,module,exports){
 function LevelModel() {
 	this.gridSize = 5;
 
@@ -87,7 +238,7 @@ LevelModel.prototype.getTotalGridSize = function ()
 };
 
 module.exports = LevelModel;
-},{}],5:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 //let PIXI = require ("../pixi.min.js");
 
 function LevelView(model, stage)
@@ -124,4 +275,4 @@ function LevelView(model, stage)
 
 
 module.exports = LevelView;
-},{}]},{},[2,3,4,5,1]);
+},{}]},{},[2,3,4,5,6,7,8,1]);
