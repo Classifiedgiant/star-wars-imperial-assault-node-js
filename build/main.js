@@ -1,68 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-
-},{}],2:[function(require,module,exports){
-let PIXI = require ("./pixi.min.js");
-let LevelModelClass = require("./model/levelModel.js");
-let LevelViewClass = require("./view/levelView.js");
-
-let renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.view);
-let stage = new PIXI.Container();
-
-let updateTick = 30;
-
-let levelModel = null;
-let levelView = null;
-
-function initFunc()
-{
-	levelModel = new LevelModelClass();
-	levelView = new LevelViewClass(levelModel, stage);
-}
-
-function updateFunc()
-{
-	
-	renderer.render(stage)
-}
-
-initFunc();
-setTimeout(updateFunc, 30)
-
-
-//renderer.render(stage);
-},{"./model/levelModel.js":3,"./pixi.min.js":4,"./view/levelView.js":5}],3:[function(require,module,exports){
-function LevelModel() {
-	this.gridSize = 5;
-	
-	this.grid = [];
-	
-	for (i = 0; i < this.gridSize; ++i)
-	{
-		let newArray = [];
-		for (j = 0; j < this.gridSize; ++j)
-			newArray.push(1);
-		
-		this.grid.push(newArray);
-}	}
-
-LevelModel.prototype.getGridIndex = function (row, col)
-{
-	return this.grid[col][row];
-}
-
-LevelModel.prototype.getGridSize = function ()
-{
-	return this.gridSize;
-}
-
-LevelModel.prototype.getTotalGridSize = function ()
-{
-	return this.gridSize * this.gridSize;
-}
-
-module.exports = LevelModel;
-},{}],4:[function(require,module,exports){
 (function (global){
 /*!
  * pixi.js - v4.3.4
@@ -87,6 +23,70 @@ t.textures[i]=new h.Texture(c,s,d,l,a[i].rotated?2:0),h.utils.TextureCache[i]=t.
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],2:[function(require,module,exports){
+
+},{}],3:[function(require,module,exports){
+let PIXI = require ("../external/pixi.min.js");
+let LevelModelClass = require("./model/levelModel.js");
+let LevelViewClass = require("./view/levelView.js");
+
+let renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.view);
+let stage = new PIXI.Container();
+
+let updateTick = 30;
+
+let levelModel = null;
+let levelView = null;
+
+function initFunc()
+{
+	levelModel = new LevelModelClass();
+	levelView = new LevelViewClass(levelModel, stage);
+}
+
+function updateFunc()
+{
+	
+	renderer.render(stage);
+}
+
+initFunc();
+setTimeout(updateFunc, 30);
+
+
+//renderer.render(stage);
+},{"../external/pixi.min.js":1,"./model/levelModel.js":4,"./view/levelView.js":5}],4:[function(require,module,exports){
+function LevelModel() {
+	this.gridSize = 5;
+
+	this.grid = [];
+
+	for (i = 0; i < this.gridSize; ++i)
+	{
+		let newArray = [];
+		for (j = 0; j < this.gridSize; ++j)
+			newArray.push(1);
+		this.grid.push(newArray);
+	}	
+}
+
+LevelModel.prototype.getGridIndex = function (row, col)
+{
+	return this.grid[col][row];
+};
+
+LevelModel.prototype.getGridSize = function ()
+{
+	return this.gridSize;
+};
+
+LevelModel.prototype.getTotalGridSize = function ()
+{
+	return this.gridSize * this.gridSize;
+};
+
+module.exports = LevelModel;
 },{}],5:[function(require,module,exports){
 //let PIXI = require ("../pixi.min.js");
 
@@ -104,7 +104,7 @@ function LevelView(model, stage)
 	{
 		let col = i % this.model.getGridSize();
 		let row = Math.floor(i / this.model.getGridSize());
-		if (this.model.getGridIndex(col, row) == 1 )
+		if (this.model.getGridIndex(col, row) === 1 )
 		{
 			this.graphics.beginFill(0x00FF00);				
 		}
@@ -124,4 +124,4 @@ function LevelView(model, stage)
 
 
 module.exports = LevelView;
-},{}]},{},[1,2,3,4,5]);
+},{}]},{},[2,3,4,5,1]);

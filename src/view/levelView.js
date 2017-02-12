@@ -14,7 +14,7 @@ function LevelView(model, stage)
 	{
 		let col = i % this.model.getGridSize();
 		let row = Math.floor(i / this.model.getGridSize());
-		if (this.model.getGridIndex(col, row) == 1 )
+		if (this.model.getGridIndex(col, row) === 1 )
 		{
 			this.graphics.beginFill(0x00FF00);				
 		}

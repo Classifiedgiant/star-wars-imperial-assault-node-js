@@ -1,25 +1,32 @@
 module.exports = function(grunt) 
 {
-	// Project configuration.
 	grunt.initConfig(
 	{
-		pkg: grunt.file.readJSON('package.json'),
+		pkg: grunt.file.readJSON("package.json"),
+		jshint:
+		{
+			all: ["./src/**/*.js"],
+			options:
+			{
+				eqeqeq: true,
+				esversion: 6
+			}
+		},
 		browserify: 
 		{
 			dist:
 			{
 				files:
 				{
-					'./build/main.js': ["./src/**/*.js"]
+					"./build/main.js": ["./src/**/*.js", "./external/**/*.js"]
 				}
 			}
 		}
 	});
 
-	// Load the plugin that provides the "browserify" task.
-	grunt.loadNpmTasks('grunt-browserify')
+	grunt.loadNpmTasks("grunt-contrib-jshint")
+	grunt.loadNpmTasks("grunt-browserify")
 
-	// Default task(s).
-	grunt.registerTask('default', ['browserify']);
+	grunt.registerTask("default", ["jshint","browserify"])
 
 };

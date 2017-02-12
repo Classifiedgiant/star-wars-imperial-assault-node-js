@@ -1,4 +1,4 @@
-let PIXI = require ("./pixi.min.js");
+let PIXI = require ("../external/pixi.min.js");
 let LevelModelClass = require("./model/levelModel.js");
 let LevelViewClass = require("./view/levelView.js");
 
@@ -20,11 +20,11 @@ function initFunc()
 function updateFunc()
 {
 	
-	renderer.render(stage)
+	renderer.render(stage);
 }
 
 initFunc();
-setTimeout(updateFunc, 30)
+setTimeout(updateFunc, 30);
 
 
 //renderer.render(stage);
