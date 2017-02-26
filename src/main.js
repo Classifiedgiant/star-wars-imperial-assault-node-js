@@ -7,19 +7,16 @@ let stage = new PIXI.Container();
 let updateTick = 30;
 
 let app = null;
-//let levelView = null;
 
 function initFunc()
 {
-    app = new AppClass();
+    app = new AppClass(stage);
     app.setupGame();
-	//levelModel = new LevelModelClass();
-	//levelView = new LevelViewClass(levelModel, stage);
 }
 
 function updateFunc()
 {
-	
+	app.render();
 	renderer.render(stage);
 }
 

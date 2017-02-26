@@ -1,8 +1,8 @@
-function DeploymentCardTypesUtil()
+function DeploymentCardsTypesUtil()
 {
 }
 
-DeploymentCardTypesUtil.prototype.GetAffiliations = function()
+DeploymentCardsTypesUtil.prototype.getAffiliations = function()
 {
     return {
         REBEL: "Rebel Allicance",
@@ -11,7 +11,7 @@ DeploymentCardTypesUtil.prototype.GetAffiliations = function()
     };
 };
 
-DeploymentCardTypesUtil.prototype.GetDefenseDiceTypes = function()
+DeploymentCardsTypesUtil.prototype.getDefenseDiceTypes = function()
 {
     return {
         BLACK: "Black",
@@ -19,7 +19,7 @@ DeploymentCardTypesUtil.prototype.GetDefenseDiceTypes = function()
     };
 };
 
-DeploymentCardTypesUtil.prototype.GetAttackTypes = function()
+DeploymentCardsTypesUtil.prototype.getAttackTypes = function()
 {
     return {
         MELEE: "Melee",
@@ -27,7 +27,7 @@ DeploymentCardTypesUtil.prototype.GetAttackTypes = function()
     };
 };
 
-DeploymentCardTypesUtil.prototype.GetAttackDiceTypes = function()
+DeploymentCardsTypesUtil.prototype.getAttackDiceTypes = function()
 {
     return {
         RED: "Red",
@@ -37,4 +37,4 @@ DeploymentCardTypesUtil.prototype.GetAttackDiceTypes = function()
     };
 };
 
-module.exports = DeploymentCardTypesUtil;
+module.exports = DeploymentCardsTypesUtil;

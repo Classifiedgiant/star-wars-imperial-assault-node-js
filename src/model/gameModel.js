@@ -1,22 +1,24 @@
 let DeploymentCardsModelClass = require("./deploymentCardModel.js");
 let DeploymentCardsTypeUtilClass = require("./deploymentCardTypesUtil.js");
 
-function GameModel()
+function GameModel(levelModel)
 {
-    this.imperial = {commandCards: null, deploymentCards: []};
-    this.rebel = {commandCards: null, deploymentCards: []};
+    this.empire = {commandCards: null, deploymentCards: [], aliveDeploymentCards: []};
+    this.rebel = {commandCards: null, deploymentCards: [], aliveDeploymentCards: []};
+    this.createArmies();
 }
 
 GameModel.prototype.createArmies = function()
 {
-    let defenseDice = DeploymentCardsTypeUtilClass.GetDefenseDiceTypes();
-    let attackTypes = DeploymentCardsTypeUtilClass.GetAttackType();
-    let attackDice = DeploymentCardsTypeUtilClass.GetAttackDiceTypes();
+    let deploymentCardUtil = new DeploymentCardsTypeUtilClass();
+    let defenseDice = deploymentCardUtil.getDefenseDiceTypes();
+    let attackTypes = deploymentCardUtil.getAttackTypes();
+    let attackDice = deploymentCardUtil.getAttackDiceTypes();
 
     // create Luke Skywalker
-    let lukeSkywalker = new deploymentCardModel(
+    let lukeSkywalker = new DeploymentCardsModelClass(
         "Luke Skywalker",
-        DeploymentCardsTypeUtilClass.GetAffiliations().REBEL,
+        deploymentCardUtil.getAffiliations().REBEL,
         10,
         true,
         [1, 1],
@@ -31,9 +33,9 @@ GameModel.prototype.createArmies = function()
         null);
 
     // empire
-    let darthVader = new deploymentCardModel(
+    let darthVader = new DeploymentCardsModelClass(
         "Darth Vader",
-        DeploymentCardsTypeUtilClass.GetAffiliations().EMPIRE,
+        deploymentCardUtil.getAffiliations().EMPIRE,
         18,
         true,
         [1,1],
@@ -48,7 +50,28 @@ GameModel.prototype.createArmies = function()
         null);
 
     this.rebel.deploymentCards.push(lukeSkywalker);
-    this.imperial.deploymentCards.push(darthVader);
+    this.empire.deploymentCards.push(darthVader);
+};
+
+GameModel.prototype.setStartPositions = function(levelModel)
+{
+    let rebelDeploymentCard = {
+        gridPosition: [0,0],
+        isRotated: false,
+        deploymentCard: this.rebel.deploymentCards[0]
+    };
+
+    let empireDeploymentCard = {
+        gridPosition: [4,4],
+        isRotated: false,
+        deploymentCard: this.empire.deploymentCards[0]
+    };
+
+    this.rebel.aliveDeploymentCards.push(rebelDeploymentCard);
+    this.empire.aliveDeploymentCards.push(empireDeploymentCard);
+
+    levelModel.setGridContent(0, 0, rebelDeploymentCard.deploymentCard);
+    levelModel.setGridContent(4, 4, empireDeploymentCard.deploymentCard);
 };
 
 module.exports = GameModel;
