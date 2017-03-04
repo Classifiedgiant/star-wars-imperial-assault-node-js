@@ -1,24 +1,35 @@
 let DeploymentCardsModelClass = require("./deploymentCardModel.js");
-let DeploymentCardsTypeUtilClass = require("./deploymentCardTypesUtil.js");
+let DeploymentCardsTypeUtilClass = require("./../util/deploymentCardsTypesUtil.js");
 
-function GameModel(levelModel)
+function GameModel(states, currentState)
 {
+    this.currentSide = DeploymentCardsTypeUtilClass.getAffiliations().REBEL;
+    this.states = null;
+    this.currentState = null;
+    this.selectedModel = null;
     this.empire = {commandCards: null, deploymentCards: [], aliveDeploymentCards: []};
     this.rebel = {commandCards: null, deploymentCards: [], aliveDeploymentCards: []};
     this.createArmies();
 }
 
+GameModel.prototype.setupGame = function(states, currentState)
+{
+    this.states = states;
+    this.currentState = currentState;
+    this.currentState.start();
+};
+
 GameModel.prototype.createArmies = function()
 {
-    let deploymentCardUtil = new DeploymentCardsTypeUtilClass();
-    let defenseDice = deploymentCardUtil.getDefenseDiceTypes();
-    let attackTypes = deploymentCardUtil.getAttackTypes();
-    let attackDice = deploymentCardUtil.getAttackDiceTypes();
+    //let deploymentCardUtil = new DeploymentCardsTypeUtilClass();
+    let defenseDice = DeploymentCardsTypeUtilClass.getDefenseDiceTypes();
+    let attackTypes = DeploymentCardsTypeUtilClass.getAttackTypes();
+    let attackDice = DeploymentCardsTypeUtilClass.getAttackDiceTypes();
 
     // create Luke Skywalker
     let lukeSkywalker = new DeploymentCardsModelClass(
         "Luke Skywalker",
-        deploymentCardUtil.getAffiliations().REBEL,
+        DeploymentCardsTypeUtilClass.getAffiliations().REBEL,
         10,
         true,
         [1, 1],
@@ -35,7 +46,7 @@ GameModel.prototype.createArmies = function()
     // empire
     let darthVader = new DeploymentCardsModelClass(
         "Darth Vader",
-        deploymentCardUtil.getAffiliations().EMPIRE,
+        DeploymentCardsTypeUtilClass.getAffiliations().EMPIRE,
         18,
         true,
         [1,1],
@@ -72,6 +83,24 @@ GameModel.prototype.setStartPositions = function(levelModel)
 
     levelModel.setGridContent(0, 0, rebelDeploymentCard.deploymentCard);
     levelModel.setGridContent(4, 4, empireDeploymentCard.deploymentCard);
+};
+
+GameModel.prototype.getCurrentSide = function()
+{
+    return this.currentSide;
+};
+
+GameModel.prototype.updateState = function()
+{
+    let changeState = this.currentState.update();
+
+    if (changeState !== null)
+    {
+        this.currentState.end();
+        let newState = this.states[changeState];
+        this.currentState = newState;
+        this.currentState.start();
+    }
 };
 
 module.exports = GameModel;

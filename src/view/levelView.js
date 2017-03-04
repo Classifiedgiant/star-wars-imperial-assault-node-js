@@ -6,41 +6,56 @@ function LevelView(model, stage)
 	this.container.position = this.containerPos;
 	this.stage = stage;
 	this.stage.addChild(this.container);
-	this.graphics = new PIXI.Graphics();
-	this.container.addChild(this.graphics);
+	this.levelGraphics = [];
+
+	for (i = 0; i < this.model.getGridArea(); ++i)
+	{
+		this.levelGraphics.push(new PIXI.Graphics());
+		//this.levelGraphics[i].interactive = true;
+		//this.levelGraphics[i].buttonMode = true;
+		this.container.addChild(this.levelGraphics[i]);
+	}
 }
+
+LevelView.prototype.getCellGraphics = function(index)
+{
+	if (index >= 0 && index < this.levelGraphics.length)
+		return this.levelGraphics[index];
+	else
+		console.log("LevelView.getCellGraphics: index(" + index + ") is not with the correct bounds (0-" + this.levelGraphics.length + ")");
+};
 
 LevelView.prototype.render = function()
 {
-	this.graphics.clear();
-
-	for (i = 0; i < this.model.getTotalGridSize(); ++i)	
+	for (i = 0; i < this.model.getGridArea(); ++i)	
 	{
-		let col = i % this.model.getGridSize();
-		let row = Math.floor(i / this.model.getGridSize());
+		let cellGraphics = this.levelGraphics[i];
+		cellGraphics.clear();
+		let col = i % this.model.getGridLength();
+		let row = Math.floor(i / this.model.getGridLength());
 		let cellContent = this.model.getGridContent(col, row);
 		let cellContentTypes = this.model.getGridCellTypes();
 		if (cellContent.type === cellContentTypes.EMPTY)
 		{
-			this.graphics.beginFill(0x00FF00);				
+			cellGraphics.beginFill(0x00FF00);				
 		}
 		else if (cellContent.type === cellContentTypes.OCCUPIED_EMPIRE)
 		{
-			this.graphics.beginFill(0x666666);
+			cellGraphics.beginFill(0x666666);
 		}
 		else if (cellContent.type === cellContentTypes.OCCUPIED_REBEL)
 		{
-			this.graphics.beginFill(0x0000AA);
+			cellGraphics.beginFill(0x0000AA);
 		}
 		else if (cellContent.type === cellContentTypes.BLOCKED)
 		{
-			this.graphics.beginFill(0xFF0000);
+			cellGraphics.beginFill(0xFF0000);
 		}
 		else
 			console.log("LevelView.ctor: unknown cellContent :" + cellContent);
 
 		let cellSize = 50;
-		this.graphics.drawRect(row * cellSize, col * cellSize, cellSize, cellSize);
+		cellGraphics.drawRect(row * cellSize, col * cellSize, cellSize, cellSize);
 	}
 };
 

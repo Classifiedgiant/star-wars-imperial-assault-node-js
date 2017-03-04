@@ -19,8 +19,16 @@ module.exports = function(grunt)
 				files:
 				{
 					"./build/main.js": ["./src/**/*.js", "./external/**/*.js"]
+				},
+				options:
+				{
+					browserifyOptions:
+					{
+						debug: true
+					}
 				}
 			}
+
 		}
 	});
 

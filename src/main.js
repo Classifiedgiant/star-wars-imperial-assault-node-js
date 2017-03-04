@@ -16,9 +16,10 @@ function initFunc()
 
 function updateFunc()
 {
+    app.update();
 	app.render();
 	renderer.render(stage);
 }
 
 initFunc();
-setTimeout(updateFunc, 30);
+setInterval(updateFunc, 30);

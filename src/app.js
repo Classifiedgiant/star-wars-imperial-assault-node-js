@@ -5,9 +5,18 @@ let LevelModelClass = require ("./model/levelModel.js");
 let GameViewClass = require ("./view/gameView.js");
 let LevelViewClass = require ("./view/levelView.js");
 
+let DeploymentCardsTypeUtilClass = require("./util/deploymentCardsTypesUtil.js");
+
+// states
+let PlayerActionStateClass = require("./state/playerActionsState.js");
+let SelectDeploymentForActionClass = require("./state/SelectDeploymentForActionState.js");
+
+
 
 function App(stage)
 {
+    this.states = null;
+
     this.models = {
         GameModel: new GameModelClass(),
         LevelModel: new LevelModelClass(),
@@ -18,17 +27,28 @@ function App(stage)
         LevelView: new LevelViewClass(this.models.LevelModel, stage),
     };
 
-    this.states = {
-        SELECT_DEPLOYMENT_CARDS: "SELECT_DEPLOYMENT_CARDS",
-        SELECT_DEPLOYMENTS_PLACE: "SELECT_DEPLOYMENT_PLACE"
-    };
-
     this.stage = stage;
 }
 
 App.prototype.setupGame = function()
 {
+    function createStates(self)
+    {
+        self.states = {
+            SELECT_DEPLOYMENT_CARDS: "SELECT_DEPLOYMENT_CARDS",
+            SELECT_DEPLOYMENT_FOR_ACTIONS: new SelectDeploymentForActionClass(self.models, self.views), 
+            PLAYERS_ACTIONS: new PlayerActionStateClass()
+        };
+    }
+
+    createStates(this);
     this.models.GameModel.setStartPositions(this.models.LevelModel);
+    this.models.GameModel.setupGame(this.states, this.states.SELECT_DEPLOYMENT_FOR_ACTIONS);
+};
+
+App.prototype.update = function()
+{
+    this.models.GameModel.updateState();
 };
 
 App.prototype.render = function()
