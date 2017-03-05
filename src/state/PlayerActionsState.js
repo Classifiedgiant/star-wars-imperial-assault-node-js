@@ -1,7 +1,9 @@
-function PlayerActionsState(gameModel, levelModel)
+let CalculateMovementUtilClass = require ("./../util/calculateMovementUtil.js");
+
+function PlayerActionsState(models)
 {
-    this.gameModel = gameModel;
-    this.levelModel = levelModel;
+    this.gameModel = models.GameModel;
+    this.levelModel = models.LevelModel;
     this.actions = {
         MOVE_DEPLOYMENT: "MOVE_DEPLOYMENT",
         //INTERACT: "INTERACT",
@@ -12,10 +14,17 @@ function PlayerActionsState(gameModel, levelModel)
 
 PlayerActionsState.prototype.start = function()
 {
-    //this.gameModel 
+    let selectedModel = this.gameModel.selectedModel;
+    let possibleMovement = CalculateMovementUtilClass.calculateMovementLength(this.levelModel, selectedModel);
+    this.levelModel.showMovementHighlight(possibleMovement);
 };
 
 PlayerActionsState.prototype.update = function()
+{
+    return null;
+};
+
+PlayerActionsState.prototype.end = function()
 {
 
 };

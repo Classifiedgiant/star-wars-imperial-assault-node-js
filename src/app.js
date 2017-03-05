@@ -37,7 +37,7 @@ App.prototype.setupGame = function()
         self.states = {
             SELECT_DEPLOYMENT_CARDS: "SELECT_DEPLOYMENT_CARDS",
             SELECT_DEPLOYMENT_FOR_ACTIONS: new SelectDeploymentForActionClass(self.models, self.views), 
-            PLAYERS_ACTIONS: new PlayerActionStateClass()
+            PLAYERS_ACTIONS: new PlayerActionStateClass(self.models)
         };
     }
 

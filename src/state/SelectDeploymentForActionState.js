@@ -21,7 +21,7 @@ SelectDeploymentForActionState.prototype.start = function()
         let col = i % this.levelModel.getGridLength();
         let row = Math.floor(i / this.levelModel.getGridLength());
         let cellContent = this.levelModel.getGridContent(col, row);
-        if (cellContent.model !== null && cellContent.model.affiliation === this.currentSide)
+        if (cellContent.model !== null &&  cellContent.model.deploymentCard !== null && cellContent.model.deploymentCard.affiliation === this.currentSide)
         {
             let cellGraphics = this.levelView.getCellGraphics(i);
             cellGraphics.interactive = true;

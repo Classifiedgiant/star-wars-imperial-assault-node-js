@@ -1,3 +1,5 @@
+let _ = require('underscore');
+
 function LevelView(model, stage)
 {
 	this.model = model;
@@ -11,8 +13,6 @@ function LevelView(model, stage)
 	for (i = 0; i < this.model.getGridArea(); ++i)
 	{
 		this.levelGraphics.push(new PIXI.Graphics());
-		//this.levelGraphics[i].interactive = true;
-		//this.levelGraphics[i].buttonMode = true;
 		this.container.addChild(this.levelGraphics[i]);
 	}
 }
@@ -31,13 +31,32 @@ LevelView.prototype.render = function()
 	{
 		let cellGraphics = this.levelGraphics[i];
 		cellGraphics.clear();
-		let col = i % this.model.getGridLength();
 		let row = Math.floor(i / this.model.getGridLength());
+		let col = i % this.model.getGridLength();
 		let cellContent = this.model.getGridContent(col, row);
 		let cellContentTypes = this.model.getGridCellTypes();
 		if (cellContent.type === cellContentTypes.EMPTY)
 		{
-			cellGraphics.beginFill(0x00FF00);				
+			let found = false;
+			let possiblePositions = this.model.getPossiblePositions(); 
+			for (let i = 0; i < possiblePositions.length; ++i)
+			{
+				let possiblePosition = possiblePositions[i];
+				if (_.isEqual(possiblePosition, {x: col, y: row}))
+				{
+					found = true;
+					break;
+				}
+			}
+
+			if (found)
+			{
+				cellGraphics.beginFill(0xFFFF00);				
+			}
+			else
+			{
+				cellGraphics.beginFill(0x00FF00);
+			}
 		}
 		else if (cellContent.type === cellContentTypes.OCCUPIED_EMPIRE)
 		{

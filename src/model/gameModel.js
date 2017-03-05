@@ -67,13 +67,13 @@ GameModel.prototype.createArmies = function()
 GameModel.prototype.setStartPositions = function(levelModel)
 {
     let rebelDeploymentCard = {
-        gridPosition: [0,0],
+        position: {x: 0, y: 0},
         isRotated: false,
         deploymentCard: this.rebel.deploymentCards[0]
     };
 
     let empireDeploymentCard = {
-        gridPosition: [4,4],
+        position: {x: 4, y: 4},
         isRotated: false,
         deploymentCard: this.empire.deploymentCards[0]
     };
@@ -81,8 +81,8 @@ GameModel.prototype.setStartPositions = function(levelModel)
     this.rebel.aliveDeploymentCards.push(rebelDeploymentCard);
     this.empire.aliveDeploymentCards.push(empireDeploymentCard);
 
-    levelModel.setGridContent(0, 0, rebelDeploymentCard.deploymentCard);
-    levelModel.setGridContent(4, 4, empireDeploymentCard.deploymentCard);
+    levelModel.setGridContent(0, 0, rebelDeploymentCard);
+    levelModel.setGridContent(4, 4, empireDeploymentCard);
 };
 
 GameModel.prototype.getCurrentSide = function()
@@ -94,7 +94,7 @@ GameModel.prototype.updateState = function()
 {
     let changeState = this.currentState.update();
 
-    if (changeState !== null)
+    if (changeState !== null && changeState !== undefined)
     {
         this.currentState.end();
         let newState = this.states[changeState];
