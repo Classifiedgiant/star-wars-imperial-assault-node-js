@@ -42,7 +42,7 @@ LevelView.prototype.render = function()
 			for (let i = 0; i < possiblePositions.length; ++i)
 			{
 				let possiblePosition = possiblePositions[i];
-				if (_.isEqual(possiblePosition, {x: col, y: row}))
+				if (_.isEqual(possiblePosition.position, {x: col, y: row}))
 				{
 					found = true;
 					break;

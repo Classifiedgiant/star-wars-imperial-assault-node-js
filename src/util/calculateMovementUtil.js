@@ -1,23 +1,35 @@
+let _ = require('underscore');
+
 module.exports = {
     calculateMovementLength: function(levelModel, model)
     {
-        function isValidSpot(levelModel, position)
+        function isValidSpot(levelModel, model, moveCount, maxMoveCount, position)
         {
             if (position.x >= 0 && position.x < levelModel.getGridLength() && 
                 position.y >= 0 && position.y < levelModel.getGridLength())
             {
                 let levelCell = levelModel.getGridContent(position.x, position.y);
-                if (levelCell.type !== levelModel.getGridCellTypes().BLOCKED)
+                if (levelCell.type === levelModel.getGridCellTypes().EMPTY)
                     return true;
-                else
-                    return false;
+
+                if (levelCell.type === levelModel.getGridCellTypes().OCCUPIED_EMPIRE &&
+                    levelCell.type === levelModel.getGridCellTypes().OCCUPIED_REBEL)
+                {
+                    let movesLeft = maxMoveCount - moveCount;
+                    let validMoveCount = model.affiliation === levelCell.model.affiliation ? 1 : 2;
+                    if (movesLeft >= validMoveCount)
+                        return true;
+                }
             }
-            else 
-                return false;
+
+            return false;
         }
 
-        function getAdjacentAreas(levelModel, position)
+        function getAdjacentAreas(levelModel, model, moveCount, maxMoveCount,position)
         {
+            if (moveCount >= maxMoveCount)
+                return [];
+
             let topLeftPos = {x: position.x - 1, y: position.y - 1};
             let topPos = {x: position.x, y: position.y - 1};
             let topRightPos = { x: position.x + 1, y: position.y - 1};
@@ -27,23 +39,63 @@ module.exports = {
             let bottomPos = { x: position.x, y: position.y + 1};
             let bottomRightPos = { x: position.x + 1, y: position.y + 1};
 
-            if (isValidSpot(levelModel, topLeftPos)) { adjacentAreas.push(topLeftPos); }
-            if (isValidSpot(levelModel, topPos)) { adjacentAreas.push(topPos); }
-            if (isValidSpot(levelModel, topRightPos)) { adjacentAreas.push(topRightPos); }
-            if (isValidSpot(levelModel, leftPos)) { adjacentAreas.push(leftPos); }
-            if (isValidSpot(levelModel, rightPos)) { adjacentAreas.push(rightPos); }
-            if (isValidSpot(levelModel, bottomLeftPos)) { adjacentAreas.push(bottomLeftPos); }
-            if (isValidSpot(levelModel, bottomPos)) { adjacentAreas.push(bottomPos); }
-            if (isValidSpot(levelModel, bottomRightPos)) { adjacentAreas.push(bottomRightPos); }
+            let newMoveCount = moveCount + 1;
+            let adjacentAreas = [];
+            if (isValidSpot(levelModel, model, moveCount, maxMoveCount, topLeftPos)) { adjacentAreas.push({ position: topLeftPos, moveCount: newMoveCount}); }
+            if (isValidSpot(levelModel, model, moveCount, maxMoveCount, topPos)) { adjacentAreas.push({ position: topPos, moveCount: newMoveCount}); }
+            if (isValidSpot(levelModel, model, moveCount, maxMoveCount, topRightPos)) { adjacentAreas.push({ position: topRightPos, moveCount: newMoveCount}); }
+            if (isValidSpot(levelModel, model, moveCount, maxMoveCount, leftPos)) { adjacentAreas.push({ position: leftPos, moveCount: newMoveCount}); }
+            if (isValidSpot(levelModel, model, moveCount, maxMoveCount, rightPos)) { adjacentAreas.push({ position: rightPos, moveCount: newMoveCount}); }
+            if (isValidSpot(levelModel, model, moveCount, maxMoveCount, bottomLeftPos)) { adjacentAreas.push({ position: bottomLeftPos, moveCount: newMoveCount}); }
+            if (isValidSpot(levelModel, model, moveCount, maxMoveCount, bottomPos)) { adjacentAreas.push({ position: bottomPos, moveCount: newMoveCount}); }
+            if (isValidSpot(levelModel, model, moveCount, maxMoveCount, bottomRightPos)) { adjacentAreas.push({ position: bottomRightPos, moveCount: newMoveCount}); }
 
             return adjacentAreas;
         }
 
-        let speed = model.deploymentCard.currentSpeed;
-        let position = model.position;
-        let adjacentAreas = [];
+        function addNewCellsToOpenCells(openCells, adjacentCells, moveCount)
+        {
+            function filterFunction(cell)
+            {
+                return _.isEqual(cell.position, this.position);
+            }
 
-        adjacentAreas =  getAdjacentAreas(levelModel, position);
-        return adjacentAreas;
+            for (let i = 0; i < adjacentCells.length; ++i)
+            {
+                let existingCell = _.find(openCells, filterFunction, adjacentCells[i]);
+                if (existingCell === undefined)
+                {
+                    openCells.push(adjacentCells[i]);
+                }
+                else
+                {
+                    // check if I got here sooner than previously
+                    // if so change moveCount
+                    if (moveCount < existingCell.moveCount)
+                    {
+                        existingCell.moveCount = moveCount;
+                    }
+                }
+            }
+        }
+
+        let speed = model.deploymentCard.baseSpeed;
+        let moveCount = 0;
+        let position = model.position;
+        let openCells = [];
+        //let closedCells = [];
+
+        openCells = getAdjacentAreas(levelModel, model.deploymentCard,  moveCount, speed, position);
+
+        // now go through the open cells and get adjacent areas again
+        for (let i = 0; i < openCells.length; ++i)
+        {
+            let position = openCells[i].position;
+            let currentMoveCount = openCells[i].moveCount;
+            let adjacentCells = getAdjacentAreas(levelModel, model.deploymentCard, currentMoveCount, speed, position);
+            addNewCellsToOpenCells(openCells, adjacentCells);
+        }
+
+        return openCells;
     }
 };
