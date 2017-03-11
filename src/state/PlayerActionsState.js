@@ -6,7 +6,6 @@ function moveCharacter(x, y)
 {
     this.movePositionSelected = {x: x, y: y};
     this.finishedMove = true;
-
 }
 
 function PlayerActionsState(models, levelView)
@@ -38,13 +37,12 @@ PlayerActionsState.prototype.update = function()
     function filterFunction(cell)
     {
         return _.isEqual(cell.position, this.movePositionSelected);
-
     }
-    if (this.finishedMove)
+
+    if (this.finishedMove)   
     {
+        this.levelView.clearSelectableTiles(moveCharacter);
         this.levelModel.moveModel(this.selectedModel, this.movePositionSelected);
-        //this.levelModel.showMovementHighlight([]);
-        this.levelView.clearSelectableTiles();
         let selectedPosition = _.find(this.movementPositions, filterFunction, this);
         this.selectedModel.deploymentCard.currentSpeed = this.selectedModel.deploymentCard.currentSpeed - selectedPosition.moveCount;
         this.movePositionSelected = null;

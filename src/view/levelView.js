@@ -40,7 +40,7 @@ LevelView.prototype.render = function()
 		let cellContentTypes = this.model.getGridCellTypes();
 		if (cellContent.type === cellContentTypes.EMPTY)
 		{
-			if (cellContent.model === null)
+			if (cellContent.models.length === 0)
 			{
 				let found = false;
 				let possiblePositions = this.model.getPossiblePositions(); 
@@ -65,11 +65,12 @@ LevelView.prototype.render = function()
 			}
 			else
 			{
-				if (cellContent.model.deploymentCard.affiliation === DeploymentCardsTypeUtilClass.getAffiliations().EMPIRE)
+				let model = cellContent.models[0];
+				if (model.deploymentCard.affiliation === DeploymentCardsTypeUtilClass.getAffiliations().EMPIRE)
 				{
 					cellGraphics.beginFill(0x666666);
 				}
-				else if (cellContent.model.deploymentCard.affiliation === DeploymentCardsTypeUtilClass.getAffiliations().REBEL)
+				else if (model.deploymentCard.affiliation === DeploymentCardsTypeUtilClass.getAffiliations().REBEL)
 				{
 					cellGraphics.beginFill(0x0000AA);
 				}
@@ -106,7 +107,7 @@ LevelView.prototype.setTilesToSelect = function(positions, callback, context)
     }
 };
 
-LevelView.prototype.clearSelectableTiles = function()
+LevelView.prototype.clearSelectableTiles = function(callback)
 {
 	let x = 0;
 	let y = 0;
@@ -119,7 +120,7 @@ LevelView.prototype.clearSelectableTiles = function()
 		index = LevelModelUtilClass.XYToIndex(this.model.getGridLength(), x, y);
 		this.levelGraphics[index].interactive = false;
 		this.levelGraphics[index].buttonMode = false;
-		this.levelGraphics[index].on("pointerdown", null);
+		this.levelGraphics[index].off("pointerdown", undefined);
 	}
 
 	this.selectablePositions = [];

@@ -8,7 +8,7 @@ function LevelModel()
 		{
 			let newArray = [];
 			for (j = 0; j < this.gridSize; ++j)
-				newArray.push({type: this.gridCellTypes.EMPTY, model: null});
+				newArray.push({type: this.gridCellTypes.EMPTY, models: []});
 			this.grid.push(newArray);
 		}	
 
@@ -44,7 +44,7 @@ LevelModel.prototype.setGridContent = function(model)
 	let cellContent = this.getGridContent(position.x, position.y);
 	if (cellContent.type === this.gridCellTypes.EMPTY)
 	{
-		cellContent.model = model;
+		cellContent.models.push(model);
 	}
 	else
 	{
@@ -59,8 +59,9 @@ LevelModel.prototype.moveModel = function(model, position)
 	let cellContent = this.getGridContent(oldPosition.x, oldPosition.y);
 	let newCellContent = this.getGridContent(position.x, position.y);
 
-	newCellContent.model = model;
-	cellContent.model = null;
+	let index = cellContent.models.indexOf(model);
+	cellContent.models.splice(index, 1);
+	newCellContent.models.push(model);
 
 	// set the model position - perhaps not ideal in here
 	model.position = position;

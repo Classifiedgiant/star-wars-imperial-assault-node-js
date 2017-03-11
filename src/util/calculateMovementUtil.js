@@ -14,16 +14,17 @@ module.exports = {
                 if (levelCell.type === levelModel.getGridCellTypes().EMPTY)
                 {
                     // is the cell empty of a model?
-                    if (levelCell.model === null)
+                    if (levelCell.models.length === 0)
                         return true;
                     else
                     {
                         // is the model in the cell not the same as the
                         // model moving
-                        if (levelCell.model.deploymentCard !== model)
+                        let cellModel = levelCell.models[0];
+                        if (cellModel.deploymentCard !== model)
                         {
                             let movesLeft = maxMoveCount - moveCount;
-                            let validMoveCount = model.affiliation === levelCell.model.affiliation ? 1 : 2;
+                            let validMoveCount = model.affiliation === cellModel.affiliation ? 2 : 3;
                             if (movesLeft >= validMoveCount)
                                 return true;
                         }

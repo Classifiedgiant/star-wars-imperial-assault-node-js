@@ -3,7 +3,7 @@ let LevelModelUtilClass = require("../util/levelModelUtil.js");
 
 function onClick(x, y)
 {
-    this.gameModel.selectedModel = this.levelModel.getGridContent(x, y).model; 
+    this.gameModel.selectedModel = this.levelModel.getGridContent(x, y).models[0]; 
 }
 
 function SelectDeploymentForActionState(models, views)
@@ -22,9 +22,17 @@ SelectDeploymentForActionState.prototype.start = function()
     {
         let position = LevelModelUtilClass.indexToXY(this.levelModel.getGridLength(), i);
         let cellContent = this.levelModel.getGridContent(position.x, position.y);
-        if (cellContent.model !== null &&  cellContent.model.deploymentCard !== null && cellContent.model.deploymentCard.affiliation === this.currentSide)
+
+        if (cellContent.models.length !== 0)
         {
-            this.selectablePositions.push({x: position.x, y: position.y});
+            if (cellContent.models.length > 1)
+                console.log("SelectDeploymentForActionState.Start: Cell " + position.x + ', '  + position.y + " has more than one model in it");
+            // should only be one model in the list - or something is wrong!!
+            let model = cellContent.models[0];
+            if (model !== null &&  model.deploymentCard !== null && model.deploymentCard.affiliation === this.currentSide)
+            {
+                this.selectablePositions.push({x: position.x, y: position.y});
+            }
         }
     }
 
@@ -41,7 +49,7 @@ SelectDeploymentForActionState.prototype.update = function()
 
 SelectDeploymentForActionState.prototype.end = function()
 {
-    this.levelView.clearSelectableTiles();
+    this.levelView.clearSelectableTiles(onClick);
     this.selectablePositions = [];
 };
 
