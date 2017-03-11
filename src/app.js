@@ -2,7 +2,6 @@
 let GameModelClass = require ("./model/gameModel.js");
 let LevelModelClass = require ("./model/levelModel.js");
 
-let GameViewClass = require ("./view/gameView.js");
 let LevelViewClass = require ("./view/levelView.js");
 
 let DeploymentCardsTypeUtilClass = require("./util/deploymentCardsTypesUtil.js");
@@ -23,7 +22,6 @@ function App(stage)
     };
 
     this.views = {
-        GameView: new GameViewClass(),
         LevelView: new LevelViewClass(this.models.LevelModel, stage),
     };
 
@@ -37,7 +35,7 @@ App.prototype.setupGame = function()
         self.states = {
             SELECT_DEPLOYMENT_CARDS: "SELECT_DEPLOYMENT_CARDS",
             SELECT_DEPLOYMENT_FOR_ACTIONS: new SelectDeploymentForActionClass(self.models, self.views), 
-            PLAYERS_ACTIONS: new PlayerActionStateClass(self.models)
+            PLAYERS_ACTIONS: new PlayerActionStateClass(self.models, self.views.LevelView)
         };
     }
 

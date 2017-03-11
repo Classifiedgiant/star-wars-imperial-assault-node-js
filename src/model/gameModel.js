@@ -81,8 +81,8 @@ GameModel.prototype.setStartPositions = function(levelModel)
     this.rebel.aliveDeploymentCards.push(rebelDeploymentCard);
     this.empire.aliveDeploymentCards.push(empireDeploymentCard);
 
-    levelModel.setGridContent(0, 0, rebelDeploymentCard);
-    levelModel.setGridContent(4, 4, empireDeploymentCard);
+    levelModel.setGridContent(rebelDeploymentCard);
+    levelModel.setGridContent(empireDeploymentCard);
 };
 
 GameModel.prototype.getCurrentSide = function()

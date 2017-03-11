@@ -18,9 +18,7 @@ function LevelModel()
 
 	this.gridCellTypes = {
 		EMPTY: 1,
-		OCCUPIED_EMPIRE: 2,
-		OCCUPIED_REBEL: 3,
-		BLOCKED: 4
+		BLOCKED: 2
 	};
 
 	this.gridSize = 5;
@@ -40,25 +38,32 @@ LevelModel.prototype.getGridContent = function(col, row)
 	return this.grid[col][row];
 };
 
-LevelModel.prototype.setGridContent = function(col, row, model)
+LevelModel.prototype.setGridContent = function(model)
 {
-	let cellContent = this.getGridContent(row, col);
+	let position = model.position;
+	let cellContent = this.getGridContent(position.x, position.y);
 	if (cellContent.type === this.gridCellTypes.EMPTY)
 	{
 		cellContent.model = model;
-		if (cellContent.model.deploymentCard.affiliation === DeploymentCardsTypeUtilClass.getAffiliations().REBEL)
-		{
-			cellContent.type = this.gridCellTypes.OCCUPIED_REBEL;
-		}
-		else if (cellContent.model.deploymentCard.affiliation === DeploymentCardsTypeUtilClass.getAffiliations().EMPIRE)
-		{
-			cellContent.type = this.gridCellTypes.OCCUPIED_EMPIRE;
-		}
-		else
-		{
-			console.log("LevelModel.setGridContent: incorrect affiliation found");
-		}
 	}
+	else
+	{
+		console.log("LevelModel.setGridContent: trying to set a model on a blocked cell");
+	}
+};
+
+LevelModel.prototype.moveModel = function(model, position)
+{
+	let oldPosition = model.position;
+	// clear old
+	let cellContent = this.getGridContent(oldPosition.x, oldPosition.y);
+	let newCellContent = this.getGridContent(position.x, position.y);
+
+	newCellContent.model = model;
+	cellContent.model = null;
+
+	// set the model position - perhaps not ideal in here
+	model.position = position;
 };
 
 LevelModel.prototype.getGridLength = function ()

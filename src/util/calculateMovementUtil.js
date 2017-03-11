@@ -1,3 +1,5 @@
+let DeploymentCardsTypesUtilClass = require("./deploymentCardsTypesUtil.js");
+
 let _ = require('underscore');
 
 module.exports = {
@@ -10,15 +12,22 @@ module.exports = {
             {
                 let levelCell = levelModel.getGridContent(position.x, position.y);
                 if (levelCell.type === levelModel.getGridCellTypes().EMPTY)
-                    return true;
-
-                if (levelCell.type === levelModel.getGridCellTypes().OCCUPIED_EMPIRE &&
-                    levelCell.type === levelModel.getGridCellTypes().OCCUPIED_REBEL)
                 {
-                    let movesLeft = maxMoveCount - moveCount;
-                    let validMoveCount = model.affiliation === levelCell.model.affiliation ? 1 : 2;
-                    if (movesLeft >= validMoveCount)
+                    // is the cell empty of a model?
+                    if (levelCell.model === null)
                         return true;
+                    else
+                    {
+                        // is the model in the cell not the same as the
+                        // model moving
+                        if (levelCell.model.deploymentCard !== model)
+                        {
+                            let movesLeft = maxMoveCount - moveCount;
+                            let validMoveCount = model.affiliation === levelCell.model.affiliation ? 1 : 2;
+                            if (movesLeft >= validMoveCount)
+                                return true;
+                        }
+                    }
                 }
             }
 
@@ -79,11 +88,10 @@ module.exports = {
             }
         }
 
-        let speed = model.deploymentCard.baseSpeed;
+        let speed = model.deploymentCard.currentSpeed;
         let moveCount = 0;
         let position = model.position;
         let openCells = [];
-        //let closedCells = [];
 
         openCells = getAdjacentAreas(levelModel, model.deploymentCard,  moveCount, speed, position);
 

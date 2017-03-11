@@ -1,8 +1,9 @@
-let DeploymentCardsTypeUtilClass = require("./../util/deploymentCardsTypesUtil.js");
+let DeploymentCardsTypeUtilClass = require("../util/deploymentCardsTypesUtil.js");
+let LevelModelUtilClass = require("../util/levelModelUtil.js");
 
-function onClick(col, row)
+function onClick(x, y)
 {
-    this.gameModel.selectedModel = this.levelModel.getGridContent(col, row).model; 
+    this.gameModel.selectedModel = this.levelModel.getGridContent(x, y).model; 
 }
 
 function SelectDeploymentForActionState(models, views)
@@ -12,23 +13,22 @@ function SelectDeploymentForActionState(models, views)
     this.gameModel = models.GameModel;
     this.levelView = views.LevelView;
     this.selectedModel = null;
+    this.selectablePositions = [];
 }
 
 SelectDeploymentForActionState.prototype.start = function()
 {
     for (let i = 0; i < this.levelModel.getGridArea(); ++i)
     {
-        let col = i % this.levelModel.getGridLength();
-        let row = Math.floor(i / this.levelModel.getGridLength());
-        let cellContent = this.levelModel.getGridContent(col, row);
+        let position = LevelModelUtilClass.indexToXY(this.levelModel.getGridLength(), i);
+        let cellContent = this.levelModel.getGridContent(position.x, position.y);
         if (cellContent.model !== null &&  cellContent.model.deploymentCard !== null && cellContent.model.deploymentCard.affiliation === this.currentSide)
         {
-            let cellGraphics = this.levelView.getCellGraphics(i);
-            cellGraphics.interactive = true;
-            cellGraphics.buttonMode = true;
-            cellGraphics.on("pointerdown", onClick.bind(this, col, row));
+            this.selectablePositions.push({x: position.x, y: position.y});
         }
     }
+
+    this.levelView.setTilesToSelect(this.selectablePositions, onClick, this);
 };
 
 SelectDeploymentForActionState.prototype.update = function()
@@ -41,19 +41,8 @@ SelectDeploymentForActionState.prototype.update = function()
 
 SelectDeploymentForActionState.prototype.end = function()
 {
-    for (let i = 0; i < this.levelModel.getGridArea(); ++i)
-    {
-        let col = i % this.levelModel.getGridLength();
-        let row = Math.floor(i / this.levelModel.getGridLength());
-        let cellContent = this.levelModel.getGridContent(col, row);
-        if (cellContent.model !== null && cellContent.model.deploymentCard !== null && cellContent.model.deploymentCard.affiliation === this.currentSide)
-        {
-            let cellGraphics = this.levelView.getCellGraphics(i);
-            cellGraphics.interactive = false;
-            cellGraphics.buttonMode = false;
-            cellGraphics.on("pointerdown", null);
-        }
-    }
+    this.levelView.clearSelectableTiles();
+    this.selectablePositions = [];
 };
 
 module.exports = SelectDeploymentForActionState; 
