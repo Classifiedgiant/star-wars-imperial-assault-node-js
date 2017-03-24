@@ -43,11 +43,11 @@ LevelView.prototype.render = function()
 			if (cellContent.models.length === 0)
 			{
 				let found = false;
-				let possiblePositions = this.model.getPossiblePositions(); 
-				for (let i = 0; i < possiblePositions.length; ++i)
+				let possibleMovePositions = this.model.getPossibleMovePositions(); 
+				for (let i = 0; i < possibleMovePositions.length; ++i)
 				{
-					let possiblePosition = possiblePositions[i];
-					if (_.isEqual(possiblePosition, {x: col, y: row}))
+					let possibleMovePosition = possibleMovePositions[i];
+					if (_.isEqual(possibleMovePosition, {x: col, y: row}))
 					{
 						found = true;
 						break;
@@ -84,7 +84,7 @@ LevelView.prototype.render = function()
 		else
 			console.log("LevelView.ctor: unknown cellContent :" + cellContent);
 
-		let cellSize = 50;
+		let cellSize = this.model.cellLength;
 		cellGraphics.drawRect(row * cellSize, col * cellSize, cellSize, cellSize);
 	}
 };

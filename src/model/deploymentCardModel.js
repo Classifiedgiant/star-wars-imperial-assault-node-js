@@ -2,6 +2,7 @@ function DeploymentCardModel(
     name,
     affiliation,
     deployCost,
+    figureCount,
     isUnique,
     gridSize,
     health,
@@ -17,13 +18,12 @@ function DeploymentCardModel(
     this.name = name;
     this.affiliation = affiliation;
     this.deployCost = deployCost;
+    this.figureCount = figureCount;
     this.isUnique = isUnique;
     this.gridSize = gridSize;   
     this.baseHealth = health;
     this.baseSpeed = speed;
 
-    this.currentHealth = this.maxHealth;
-    this.currentSpeed = this.baseSpeed;
     this.defenseDice = defenseDice;
     this.attackType = attackType;
     this.attackDice = attackDice;

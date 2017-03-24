@@ -1,5 +1,7 @@
 let DeploymentCardsTypeUtilClass = require("./../util/deploymentCardsTypesUtil.js");
 
+let _ = require("underscore");
+
 function LevelModel() 
 {
 	function CreateGrid()
@@ -12,8 +14,8 @@ function LevelModel()
 			this.grid.push(newArray);
 		}	
 
-		this.getGridContent(1, 3).type = this.gridCellTypes.BLOCKED;
-		this.getGridContent(3, 1).type = this.gridCellTypes.BLOCKED;
+		this._setBlockingCell(1, 3);
+		this._setBlockingCell(3, 1);
 	}
 
 	this.gridCellTypes = {
@@ -22,8 +24,10 @@ function LevelModel()
 	};
 
 	this.gridSize = 5;
+	this.cellLength = 50;
 	this.grid = [];
-	this.possiblePositions = [];
+	this.blockingLine = [];
+	this.possibleMovePositions = [];
 
 	CreateGrid.call(this);
 }
@@ -55,6 +59,7 @@ LevelModel.prototype.setGridContent = function(model)
 LevelModel.prototype.moveModel = function(model, position)
 {
 	let oldPosition = model.position;
+
 	// clear old
 	let cellContent = this.getGridContent(oldPosition.x, oldPosition.y);
 	let newCellContent = this.getGridContent(position.x, position.y);
@@ -77,14 +82,46 @@ LevelModel.prototype.getGridArea = function ()
 	return this.gridSize * this.gridSize;
 };
 
-LevelModel.prototype.getPossiblePositions = function()
+LevelModel.prototype.getPossibleMovePositions = function()
 {
-	return this.possiblePositions;
+	return this.possibleMovePositions;
 };
 
-LevelModel.prototype.showMovementHighlight = function(possiblePositions)
+LevelModel.prototype.showMovementHighlight = function(possibleMovePositions)
 {
-	this.possiblePositions = possiblePositions;
+	this.possibleMovePositions = possibleMovePositions;
+};
+
+LevelModel.prototype.getArmyModelsInCell = function(position, affiliation)
+{
+	let models = this.getGridContent(position.x, position.y);
+	return _.findWhere(models, {deploymentCard: {affiliation: affiliation}});
+};
+
+LevelModel.prototype.isVisibleToEachOther = function(fromPositiom, toPosition)
+{
+	// figure
+};
+
+LevelModel.prototype._setBlockingCell = function(x, y)
+{
+	this.getGridContent(x, y).type = this.gridCellTypes.BLOCKED;
+
+	let topLeft = {x: x * this.cellLength, y: y * this.cellLength};
+	let topRight = {x: (x+1) * this.cellLength, y: y * this.cellLength};
+	let bottomLeft = {x: x * this.cellLength, y: (y+1) * this.cellLength};
+	let bottomRight = {x: (x+1) * this.cellLength, y: (y+1) * this.cellLength};
+
+	// blockingLine
+	let topBlockingLine = { point1: topLeft, point2: topRight};
+	let leftBlockingLine = { point1: topLeft, point2: bottomLeft};
+	let rightBlockingLine = { point1: topRight, point2: bottomRight};
+	let bottomBlockingLine = { point1: bottomLeft, point2: bottomRight};
+
+	this.blockingLine.push(topBlockingLine);
+	this.blockingLine.push(leftBlockingLine);
+	this.blockingLine.push(rightBlockingLine);
+	this.blockingLine.push(bottomBlockingLine);
 };
 
 module.exports = LevelModel;

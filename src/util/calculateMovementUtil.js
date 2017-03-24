@@ -2,13 +2,41 @@ let DeploymentCardsTypesUtilClass = require("./deploymentCardsTypesUtil.js");
 
 let _ = require('underscore');
 
+function checkLevelBounds(position, levelModel)
+{
+    return position.x >= 0 && position.x < levelModel.getGridLength() && 
+    position.y >= 0 && position.y < levelModel.getGridLength(); 
+}
+
 module.exports = {
+    getSurroundingArea: function(position, levelModel)
+    {
+        let adjacentAreas = [];
+        let topLeftPos = {x: position.x - 1, y: position.y - 1};
+        let topPos = {x: position.x, y: position.y - 1};
+        let topRightPos = { x: position.x + 1, y: position.y - 1};
+        let leftPos = { x: position.x - 1, y: position.y};
+        let rightPos = { x: position.x + 1, y: position.y};
+        let bottomLeftPos = { x: position.x - 1, y: position.y + 1};
+        let bottomPos = { x: position.x, y: position.y + 1};
+        let bottomRightPos = { x: position.x + 1, y: position.y + 1};
+
+        if (checkLevelBounds(topLeftPos, levelModel)) { adjacentAreas.push(topLeftPos); }
+        if (checkLevelBounds(topPos, levelModel)) { adjacentAreas.push(topPos); }
+        if (checkLevelBounds(topRightPos, levelModel)) { adjacentAreas.push(topRightPos); }
+        if (checkLevelBounds(leftPos, levelModel)) { adjacentAreas.push(leftPos); }
+        if (checkLevelBounds(rightPos, levelModel)) { adjacentAreas.push(rightPos); }
+        if (checkLevelBounds(bottomLeftPos, levelModel)) { adjacentAreas.push(bottomLeftPos); }
+        if (checkLevelBounds(bottomPos, levelModel)) { adjacentAreas.push(bottomPos); }
+        if (checkLevelBounds(bottomRightPos, levelModel)) { adjacentAreas.push(bottomRightPos); }
+        return adjacentAreas;
+    },
+
     calculateMovementLength: function(levelModel, model)
     {
         function isValidSpot(levelModel, model, moveCount, maxMoveCount, position)
         {
-            if (position.x >= 0 && position.x < levelModel.getGridLength() && 
-                position.y >= 0 && position.y < levelModel.getGridLength())
+            if (checkLevelBounds(position, levelModel))
             {
                 let levelCell = levelModel.getGridContent(position.x, position.y);
                 if (levelCell.type === levelModel.getGridCellTypes().EMPTY)

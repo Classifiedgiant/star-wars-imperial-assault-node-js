@@ -1,4 +1,5 @@
 let CalculateMovementUtilClass = require ("./../util/calculateMovementUtil.js");
+let DeploymentCardsTypesUtilClass = require("./../util/deploymentCardsTypesUtil.js");
 
 let _ = require('underscore');
 
@@ -8,28 +9,75 @@ function moveCharacter(x, y)
     this.finishedMove = true;
 }
 
+function canRangeAttack()
+{
+    return this.selectedModel.deploymentCard.attackType === DeploymentCardsTypesUtilClass.getAttackTypes().RANGE;
+}
+
+function canMeleeAttack()
+{
+    return this.selectedModel.deploymentCard.attackType === DeploymentCardsTypesUtilClass.getAttackTypes().MELEE;
+}
+
+function attackEnemyAtPosition(x, y)
+{
+    this.attacking = true;
+}
+
+// function GetAllEnemiesAttackableByMelee()
+// {
+//     let meleeEnemies = [];
+//     if (canMeleeAttack.call(this))
+//     {
+//         let surroundingArea = CalculateMovementUtilClass.getSurroundingArea(this.selectedModel.position, this.levelModel);
+//         for (let i = 0; i < surroundingArea.length; ++i)
+//         {
+//             let enemyArmy = this.selectedModel.deploymentCard.affiliation === DeploymentCardsTypesUtilClass.getAffiliations().REBEL ? DeploymentCardsTypesUtilClass.getAffiliations().EMPIRE : DeploymentCardsTypesUtilClass.getAffiliations().REBEL;
+//             meleeEnemies = this.levelModel.getArmyModelsInCell(this.selectedModel.position, enemyArmy);
+//         }
+//     }
+
+//     return meleeEnemies;
+// }
+
+function GetAllEnemiesAttackableByRange()
+{
+    let rangeEnemies = [];
+    let selectedModelPos = this.selectedModel.position;
+
+    if (canRangeAttack.call(this))
+    {
+        let enemyArmy = this.gameModel.getEnemyArmy(this.selectedModel.affiliation);
+        for (let i = 0; i < enemyArmy.length; ++i)
+        {
+            let enemyPos = enemyArmy[i].position;
+        }
+    }
+}
+
 function PlayerActionsState(models, levelView)
 {
     this.gameModel = models.GameModel;
     this.levelModel = models.LevelModel;
     this.levelView = levelView;
-    this.actions = {
-        MOVE_DEPLOYMENT: "MOVE_DEPLOYMENT",
-        //INTERACT: "INTERACT",
-        ATTACK_ENEMY: "ATTACK_ENEMY",
-        END_ACTION: "END_ACTION"
-    };
     this.selectedModel = null;
+    
+    // movement variables
     this.movementPositions= null;
     this.cellPositions= null;
     this.movePositionSelected = null;
     this.finishedMove = false;
+
+    // attacking variables
+    this.enemyPositions = null;
+    this.attacking = false;
 }
 
 PlayerActionsState.prototype.start = function()
 {
     this.selectedModel = this.gameModel.selectedModel;
     this.calculateMovements();
+    this.calculateAttackActions();
 };
 
 PlayerActionsState.prototype.update = function()
@@ -67,6 +115,15 @@ PlayerActionsState.prototype.calculateMovements = function()
     // lockie - not sure if one call should inform the other here
     this.levelModel.showMovementHighlight(this.cellPositions);
     this.levelView.setTilesToSelect(this.cellPositions, moveCharacter, this);
+};
+
+PlayerActionsState.prototype.calculateAttackActions = function()
+{
+    //let meleeEnemies = GetAllEnemiesAttackableByMelee.call(this);
+    let rangeEnemies = GetAllEnemiesAttackableByRange.call(this);
+
+    // This can be the same as 
+    //this.levelView.setTilesToSelect(this.enemyPositions, attackEnemyAtPosition, this); 
 };
 
 

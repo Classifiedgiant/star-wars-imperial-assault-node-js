@@ -31,6 +31,7 @@ GameModel.prototype.createArmies = function()
         "Luke Skywalker",
         DeploymentCardsTypeUtilClass.getAffiliations().REBEL,
         10,
+        1,
         true,
         [1, 1],
         10,
@@ -48,6 +49,7 @@ GameModel.prototype.createArmies = function()
         "Darth Vader",
         DeploymentCardsTypeUtilClass.getAffiliations().EMPIRE,
         18,
+        1,
         true,
         [1,1],
         16,
@@ -101,6 +103,16 @@ GameModel.prototype.updateState = function()
         this.currentState = newState;
         this.currentState.start();
     }
+};
+
+GameModel.prototype.getEnemyArmy = function(affiliation)
+{
+    if (affiliation === "Empire")
+        return this.rebel.aliveDeploymentCards;
+    else if (affiliation === "Rebel")
+        return this.empire.aliveDeploymentCards;
+    else 
+        console.log("GameModel.getEnemyArmy: affiliation is not expected: " + affiliation);
 };
 
 module.exports = GameModel;
