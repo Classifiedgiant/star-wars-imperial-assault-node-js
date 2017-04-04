@@ -24,21 +24,21 @@ function attackEnemyAtPosition(x, y)
     this.attacking = true;
 }
 
-// function GetAllEnemiesAttackableByMelee()
-// {
-//     let meleeEnemies = [];
-//     if (canMeleeAttack.call(this))
-//     {
-//         let surroundingArea = CalculateMovementUtilClass.getSurroundingArea(this.selectedModel.position, this.levelModel);
-//         for (let i = 0; i < surroundingArea.length; ++i)
-//         {
-//             let enemyArmy = this.selectedModel.deploymentCard.affiliation === DeploymentCardsTypesUtilClass.getAffiliations().REBEL ? DeploymentCardsTypesUtilClass.getAffiliations().EMPIRE : DeploymentCardsTypesUtilClass.getAffiliations().REBEL;
-//             meleeEnemies = this.levelModel.getArmyModelsInCell(this.selectedModel.position, enemyArmy);
-//         }
-//     }
+function GetAllEnemiesAttackableByMelee()
+{
+    let meleeEnemies = [];
+    if (canMeleeAttack.call(this))
+    {
+        let surroundingArea = CalculateMovementUtilClass.getSurroundingArea(this.selectedModel.position, this.levelModel);
+        for (let i = 0; i < surroundingArea.length; ++i)
+        {
+            let enemyArmy = this.selectedModel.deploymentCard.affiliation === DeploymentCardsTypesUtilClass.getAffiliations().REBEL ? DeploymentCardsTypesUtilClass.getAffiliations().EMPIRE : DeploymentCardsTypesUtilClass.getAffiliations().REBEL;
+            meleeEnemies = this.levelModel.getArmyModelsInCell(this.selectedModel.position, enemyArmy);
+        }
+    }
 
-//     return meleeEnemies;
-// }
+    return meleeEnemies;
+}
 
 function GetAllEnemiesAttackableByRange()
 {
@@ -47,12 +47,18 @@ function GetAllEnemiesAttackableByRange()
 
     if (canRangeAttack.call(this))
     {
-        let enemyArmy = this.gameModel.getEnemyArmy(this.selectedModel.affiliation);
+        let enemyArmy = this.gameModel.getEnemyArmy(this.selectedModel.deploymentCard.affiliation);
         for (let i = 0; i < enemyArmy.length; ++i)
         {
             let enemyPos = enemyArmy[i].position;
+            if (this.levelModel.isVisibleToEachOther(selectedModelPos, enemyPos))
+            {
+                rangeEnemies.push(enemyPos);
+            }
         }
     }
+
+    return rangeEnemies;
 }
 
 function PlayerActionsState(models, levelView)
@@ -69,7 +75,7 @@ function PlayerActionsState(models, levelView)
     this.finishedMove = false;
 
     // attacking variables
-    this.enemyPositions = null;
+    this.attackableEnemies = [];
     this.attacking = false;
 }
 
@@ -119,11 +125,30 @@ PlayerActionsState.prototype.calculateMovements = function()
 
 PlayerActionsState.prototype.calculateAttackActions = function()
 {
-    //let meleeEnemies = GetAllEnemiesAttackableByMelee.call(this);
+    let meleeEnemies = GetAllEnemiesAttackableByMelee.call(this);
     let rangeEnemies = GetAllEnemiesAttackableByRange.call(this);
 
+    for (let i = 0; i < meleeEnemies.length; ++i)
+    {
+        this.attackableEnemies.push({enemy: meleeEnemies[i], canMelee: true});
+    }
+
+    for (let i = 0; i < rangeEnemies.length; ++i)
+    {
+        let alreadyExistingEnemy = _.findWhere(this.attackableEnemies, {enemy: rangeEnemies[i]});
+        if (alreadyExistingEnemy !== undefined)
+        {
+            alreadyExistingEnemy.canRange = true;
+        }
+        else
+        {
+            this.attackableEnemies.push({enemy:rangeEnemies[i], canRange: true});
+        }
+    }
+
     // This can be the same as 
-    //this.levelView.setTilesToSelect(this.enemyPositions, attackEnemyAtPosition, this); 
+    let cellPositions = _.pluck(this.attackableEnemies, 'enemy');
+    this.levelView.setTilesToSelect(cellPositions, attackEnemyAtPosition, this); 
 };
 
 

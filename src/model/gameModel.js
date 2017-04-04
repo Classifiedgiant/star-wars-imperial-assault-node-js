@@ -107,9 +107,9 @@ GameModel.prototype.updateState = function()
 
 GameModel.prototype.getEnemyArmy = function(affiliation)
 {
-    if (affiliation === "Empire")
+    if (affiliation === DeploymentCardsTypeUtilClass.getAffiliations().EMPIRE)
         return this.rebel.aliveDeploymentCards;
-    else if (affiliation === "Rebel")
+    else if (affiliation === DeploymentCardsTypeUtilClass.getAffiliations().REBEL)
         return this.empire.aliveDeploymentCards;
     else 
         console.log("GameModel.getEnemyArmy: affiliation is not expected: " + affiliation);
