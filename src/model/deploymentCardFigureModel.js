@@ -12,3 +12,5 @@ function DeploymentCardFigureModel(deploymentCard, groupId, modelId)
     this.groupdId = groupId;
     this.modelId = modelId;
 }
+
+module.exports = DeploymentCardFigureModel;

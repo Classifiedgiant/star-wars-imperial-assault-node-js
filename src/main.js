@@ -1,6 +1,7 @@
 let PIXI = require ("../external/pixi.min.js");
 let AppClass = require ("./app.js");
 let renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight);
+renderer.backgroundColor = 0xaaaaaa;
 document.body.appendChild(renderer.view);
 let stage = new PIXI.Container();
 

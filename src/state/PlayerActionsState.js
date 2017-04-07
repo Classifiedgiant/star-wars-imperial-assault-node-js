@@ -1,13 +1,29 @@
 let CalculateMovementUtilClass = require ("./../util/calculateMovementUtil.js");
 let DeploymentCardsTypesUtilClass = require("./../util/deploymentCardsTypesUtil.js");
+let ActionContextMenuViewClass = require("./../view/actionContextMenuView.js");
 
 let _ = require('underscore');
 
-function moveCharacter(x, y)
+function actionableCellSelected(x, y)
 {
-    this.movePositionSelected = {x: x, y: y};
-    this.finishedMove = true;
+    function filterPredicate(element)
+    {
+        return (element.position.x === x && element.position.y === y);
+    }
+
+    // find actions withinCell
+    let actions = _.filter(this.actionableCells, filterPredicate, this);
+    if (actions !== undefined)
+    {
+        if (actions.length > 1 ) console.log("PlayerActionsState.actionableCellSelected: found more than one cell in actionable cell - only using first");
+        this.actionContextMenuView.displayMenu(actions[0]);
+    }
 }
+// function moveCharacter(x, y)
+// {
+//     this.movePositionSelected = {x: x, y: y};
+//     this.finishedMove = true;
+// }
 
 function canRangeAttack()
 {
@@ -19,10 +35,10 @@ function canMeleeAttack()
     return this.selectedModel.deploymentCard.attackType === DeploymentCardsTypesUtilClass.getAttackTypes().MELEE;
 }
 
-function attackEnemyAtPosition(x, y)
-{
-    this.attacking = true;
-}
+// function attackEnemyAtPosition(x, y)
+// {
+//     this.attacking = true;
+// }
 
 function GetAllEnemiesAttackableByMelee()
 {
@@ -61,12 +77,17 @@ function GetAllEnemiesAttackableByRange()
     return rangeEnemies;
 }
 
-function PlayerActionsState(models, levelView)
+function PlayerActionsState(stage, models, levelView)
 {
+    this.stage = stage;
     this.gameModel = models.GameModel;
     this.levelModel = models.LevelModel;
     this.levelView = levelView;
     this.selectedModel = null;
+
+    this.actionableCells = [];
+    this.selectCell = null;
+    this.actionContextMenuView = new ActionContextMenuViewClass(this.stage, {x: 0, y:0});
     
     // movement variables
     this.movementPositions= null;
@@ -82,8 +103,7 @@ function PlayerActionsState(models, levelView)
 PlayerActionsState.prototype.start = function()
 {
     this.selectedModel = this.gameModel.selectedModel;
-    this.calculateMovements();
-    this.calculateAttackActions();
+    this.findAllActionableCells();
 };
 
 PlayerActionsState.prototype.update = function()
@@ -102,7 +122,7 @@ PlayerActionsState.prototype.update = function()
         this.movePositionSelected = null;
         this.finishedMove = false;
         
-        this.calculateMovements();
+        this.findAllActionableCells();
     }
 
     return null;
@@ -110,45 +130,73 @@ PlayerActionsState.prototype.update = function()
 
 PlayerActionsState.prototype.end = function()
 {
+};
 
+PlayerActionsState.prototype.findAllActionableCells = function()
+{
+    this.cellPositions = this.calculateMovements();
+    this.attackableEnemies = this.calculateAttackActions();
+    for (let i = 0; i < this.cellPositions.length; ++i)
+    {
+        this.actionableCells.push({position: this.cellPositions[i], canMove:true, canMelee:false, canRange:false, canInteract:false});
+    }
+
+    for (let i = 0; i < this.attackableEnemies.length; ++i)
+    {
+        let cellAlready = _.findWhere(this.actionableCells, {position: this.attackableEnemies.enemy});
+        if (cellAlready !== undefined)
+        {
+            cellAlready.canMelee = this.attackableEnemies[i].canMelee;
+            cellAlready.canRange = this.attackableEnemies[i].canRange;
+        }
+        else
+        {
+            let melee = this.attackableEnemies[i].canMelee;
+            let range = this.attackableEnemies[i].canRange;
+            this.actionableCells.push({position: this.attackableEnemies[i].enemy, canMove:false, canRange:range, canMelee:melee, canInteract:false});
+        }
+    }
+    let positions = _.pluck(this.actionableCells, 'position');
+    this.levelView.setTilesToSelect(positions, actionableCellSelected, this);
 };
 
 PlayerActionsState.prototype.calculateMovements = function()
 {
     this.movementPositions = CalculateMovementUtilClass.calculateMovementLength(this.levelModel, this.selectedModel);
-    this.cellPositions = _.pluck(this.movementPositions, 'position');
-
-    // lockie - not sure if one call should inform the other here
-    this.levelModel.showMovementHighlight(this.cellPositions);
-    this.levelView.setTilesToSelect(this.cellPositions, moveCharacter, this);
+    let movementCells = _.pluck(this.movementPositions, 'position'); 
+    this.levelModel.showMovementHighlight(movementCells);
+    return movementCells;
 };
 
 PlayerActionsState.prototype.calculateAttackActions = function()
 {
     let meleeEnemies = GetAllEnemiesAttackableByMelee.call(this);
     let rangeEnemies = GetAllEnemiesAttackableByRange.call(this);
+    let attackableEnemies = [];
 
     for (let i = 0; i < meleeEnemies.length; ++i)
     {
-        this.attackableEnemies.push({enemy: meleeEnemies[i], canMelee: true});
+        attackableEnemies.push({enemy: meleeEnemies[i], canMelee: true});
     }
 
     for (let i = 0; i < rangeEnemies.length; ++i)
     {
-        let alreadyExistingEnemy = _.findWhere(this.attackableEnemies, {enemy: rangeEnemies[i]});
+        let alreadyExistingEnemy = _.findWhere(attackableEnemies, {enemy: rangeEnemies[i]});
         if (alreadyExistingEnemy !== undefined)
         {
             alreadyExistingEnemy.canRange = true;
         }
         else
         {
-            this.attackableEnemies.push({enemy:rangeEnemies[i], canRange: true});
+            attackableEnemies.push({enemy:rangeEnemies[i], canRange: true,});
         }
     }
 
+    return attackableEnemies;
+
     // This can be the same as 
-    let cellPositions = _.pluck(this.attackableEnemies, 'enemy');
-    this.levelView.setTilesToSelect(cellPositions, attackEnemyAtPosition, this); 
+    //return _.pluck(this.attackableEnemies, 'enemy');
+    //this.levelView.setTilesToSelect(cellPositions, attackEnemyAtPosition, this); 
 };
 
 

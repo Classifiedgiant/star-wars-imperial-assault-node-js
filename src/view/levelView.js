@@ -103,7 +103,7 @@ LevelView.prototype.setTilesToSelect = function(positions, callback, context)
         index = LevelModelUtilClass.XYToIndex(this.model.getGridLength(), x, y);
     	this.levelGraphics[index].interactive = true;
     	this.levelGraphics[index].buttonMode = true;
-    	this.levelGraphics[index].on("pointerdown", callback.bind(context, x, y));
+    	this.levelGraphics[index].on("pointerup", callback.bind(context, x, y));
     }
 };
 

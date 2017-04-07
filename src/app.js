@@ -14,6 +14,7 @@ let SelectDeploymentForActionClass = require("./state/SelectDeploymentForActionS
 
 function App(stage)
 {
+    this.stage = stage;
     this.states = null;
 
     this.models = {
@@ -22,10 +23,8 @@ function App(stage)
     };
 
     this.views = {
-        LevelView: new LevelViewClass(this.models.LevelModel, stage),
+        LevelView: new LevelViewClass(this.models.LevelModel, stage)
     };
-
-    this.stage = stage;
 }
 
 App.prototype.setupGame = function()
@@ -35,7 +34,7 @@ App.prototype.setupGame = function()
         self.states = {
             SELECT_DEPLOYMENT_CARDS: "SELECT_DEPLOYMENT_CARDS",
             SELECT_DEPLOYMENT_FOR_ACTIONS: new SelectDeploymentForActionClass(self.models, self.views), 
-            PLAYERS_ACTIONS: new PlayerActionStateClass(self.models, self.views.LevelView)
+            PLAYERS_ACTIONS: new PlayerActionStateClass(self.stage, self.models, self.views.LevelView)
         };
     }
 
