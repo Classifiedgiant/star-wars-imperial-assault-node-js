@@ -1,4 +1,6 @@
-let DeploymentCardsModelClass = require("./deploymentCardModel.js");
+let DeploymentCardModelClass = require("./deploymentCardModel.js");
+let DeploymentCardFigureModelClass = require("./deploymentCardFigureModel.js");
+
 let DeploymentCardsTypeUtilClass = require("./../util/deploymentCardsTypesUtil.js");
 
 function GameModel(states, currentState)
@@ -7,8 +9,8 @@ function GameModel(states, currentState)
     this.states = null;
     this.currentState = null;
     this.selectedModel = null;
-    this.empire = {commandCards: null, deploymentCards: [], aliveDeploymentCards: []};
-    this.rebel = {commandCards: null, deploymentCards: [], aliveDeploymentCards: []};
+    this.empire = {commandCards: null, deploymentCards: [], aliveFigures: []};
+    this.rebel = {commandCards: null, deploymentCards: [], aliveFigures: []};
     this.createArmies();
 }
 
@@ -27,7 +29,7 @@ GameModel.prototype.createArmies = function()
     let attackDice = DeploymentCardsTypeUtilClass.getAttackDiceTypes();
 
     // create Luke Skywalker
-    let lukeSkywalker = new DeploymentCardsModelClass(
+    let lukeSkywalker = new DeploymentCardModelClass(
         "Luke Skywalker",
         DeploymentCardsTypeUtilClass.getAffiliations().REBEL,
         10,
@@ -45,7 +47,7 @@ GameModel.prototype.createArmies = function()
         null);
 
     // empire
-    let darthVader = new DeploymentCardsModelClass(
+    let darthVader = new DeploymentCardModelClass(
         "Darth Vader",
         DeploymentCardsTypeUtilClass.getAffiliations().EMPIRE,
         18,
@@ -68,23 +70,24 @@ GameModel.prototype.createArmies = function()
 
 GameModel.prototype.setStartPositions = function(levelModel)
 {
-    let rebelDeploymentCard = {
-        position: {x: 0, y: 0},
-        isRotated: false,
-        deploymentCard: this.rebel.deploymentCards[0]
-    };
+    let rebelFigure = new DeploymentCardFigureModelClass(this.rebel.deploymentCards[0], {x:0, y:0}, false, 0, 0);
+    //     position: {x: 0, y: 0},
+    //     isRotated: false,
+    //     deploymentCard: this.rebel.deploymentCards[0]
+    // };
 
-    let empireDeploymentCard = {
-        position: {x: 4, y: 4},
-        isRotated: false,
-        deploymentCard: this.empire.deploymentCards[0]
-    };
+    let empireFigure = new DeploymentCardFigureModelClass(this.empire.deploymentCards[0], {x:4, y:4}, false, 0, 0);
+    // let empireDeploymentCard = {
+    //     position: {x: 4, y: 4},
+    //     isRotated: false,
+    //     deploymentCard: this.empire.deploymentCards[0]
+    // };
 
-    this.rebel.aliveDeploymentCards.push(rebelDeploymentCard);
-    this.empire.aliveDeploymentCards.push(empireDeploymentCard);
+    this.rebel.aliveFigures.push(rebelFigure);
+    this.empire.aliveFigures.push(empireFigure);
 
-    levelModel.setGridContent(rebelDeploymentCard);
-    levelModel.setGridContent(empireDeploymentCard);
+    levelModel.setGridContent(rebelFigure);
+    levelModel.setGridContent(empireFigure);
 };
 
 GameModel.prototype.getCurrentSide = function()
@@ -108,9 +111,9 @@ GameModel.prototype.updateState = function()
 GameModel.prototype.getEnemyArmy = function(affiliation)
 {
     if (affiliation === DeploymentCardsTypeUtilClass.getAffiliations().EMPIRE)
-        return this.rebel.aliveDeploymentCards;
+        return this.rebel.aliveFigures;
     else if (affiliation === DeploymentCardsTypeUtilClass.getAffiliations().REBEL)
-        return this.empire.aliveDeploymentCards;
+        return this.empire.aliveFigures;
     else 
         console.log("GameModel.getEnemyArmy: affiliation is not expected: " + affiliation);
 };

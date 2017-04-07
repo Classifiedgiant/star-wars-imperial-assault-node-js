@@ -27,6 +27,7 @@ SelectDeploymentForActionState.prototype.start = function()
         {
             if (cellContent.models.length > 1)
                 console.log("SelectDeploymentForActionState.Start: Cell " + position.x + ', '  + position.y + " has more than one model in it");
+            
             // should only be one model in the list - or something is wrong!!
             let model = cellContent.models[0];
             if (model !== null &&  model.deploymentCard !== null && model.deploymentCard.affiliation === this.currentSide)

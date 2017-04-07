@@ -12,7 +12,7 @@ function ActionContextMenuView(stage, displayPosition)
     this._stage.addChild(this._container);
 }
 
-ActionContextMenuView.prototype.displayMenu = function(actions) 
+ActionContextMenuView.prototype.displayMenu = function(actions, callbackContext, moveCallback, rangeCallback, meleeCallback, interactCallback) 
 {
     clear.call(this);
     let buttonHeight = 25;
@@ -25,19 +25,31 @@ ActionContextMenuView.prototype.displayMenu = function(actions)
         let moveButton = new PIXI.Text("Move");
         moveButton.interactive = true;
         moveButton.buttonMode = true;
-        moveButton.on("pointerup", function(){});
+        moveButton.on("pointerup", moveCallback.bind(callbackContext));
         moveButton.x = 0;
         moveButton.y = 0;
         buttonYPos += buttonHeight;
         this._container.addChild(moveButton);
     }
     
-    if (actions.canRange || actions.canMelee)
+    if (actions.canRange)
     {
-        let attackButton = new PIXI.Text("Attack");
+        let attackButton = new PIXI.Text("Attack - Range");
         attackButton.interactive = true;
         attackButton.buttonMode = true;
-        attackButton.on("pointerup", function(){});
+        attackButton.on("pointerup", rangeCallback.bind(callbackContext));
+        attackButton.x = 0;
+        attackButton.y = buttonYPos;
+        buttonYPos += buttonHeight;
+        this._container.addChild(attackButton);        
+    }
+
+    if (actions.canMelee)
+    {
+        let attackButton = new PIXI.Text("Attack - Melee");
+        attackButton.interactive = true;
+        attackButton.buttonMode = true;
+        attackButton.on("pointerup", meleeCallback.bind(callbackContext));
         attackButton.x = 0;
         attackButton.y = buttonYPos;
         buttonYPos += buttonHeight;
@@ -49,7 +61,7 @@ ActionContextMenuView.prototype.displayMenu = function(actions)
         let interactButton = new PIXI.Text("Interact");
         interactButton.interactive = true;
         interactButton.buttonMode = true;
-        interactButton.on("pointerup", function(){});
+        interactButton.on("pointerup", interactCallback.bind(callbackContext));
         interactButton.x = 0;
         interactButton.y = buttonYPos;
         buttonYPos += buttonHeight;

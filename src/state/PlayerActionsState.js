@@ -4,6 +4,26 @@ let ActionContextMenuViewClass = require("./../view/actionContextMenuView.js");
 
 let _ = require('underscore');
 
+function moveFigure()
+{
+    this.finishedMove = true;
+}
+
+function attackEnemyAtPosition()
+{
+    this.attacking = true;
+}
+
+function meleeEnemyAtPosition()
+{
+    console.log("PlayerActionsState.meleeEnemyAtPosition is not created");
+}
+
+function interactAtPosition()
+{
+    console.log("PlayerActionsState.interactAtPosition is not created");
+}
+
 function actionableCellSelected(x, y)
 {
     function filterPredicate(element)
@@ -15,15 +35,19 @@ function actionableCellSelected(x, y)
     let actions = _.filter(this.actionableCells, filterPredicate, this);
     if (actions !== undefined)
     {
-        if (actions.length > 1 ) console.log("PlayerActionsState.actionableCellSelected: found more than one cell in actionable cell - only using first");
-        this.actionContextMenuView.displayMenu(actions[0]);
+        if (actions.length > 1) console.log("PlayerActionsState.actionableCellSelected: found more than one cell in actionable cell - only using first");
+        
+        this.selectedPosition = actions[0].position;
+        this.actionContextMenuView.displayMenu(actions[0], 
+            this,
+            moveFigure,
+            attackEnemyAtPosition,
+            meleeEnemyAtPosition,
+            interactAtPosition
+        );
     }
 }
-// function moveCharacter(x, y)
-// {
-//     this.movePositionSelected = {x: x, y: y};
-//     this.finishedMove = true;
-// }
+
 
 function canRangeAttack()
 {
@@ -35,10 +59,6 @@ function canMeleeAttack()
     return this.selectedModel.deploymentCard.attackType === DeploymentCardsTypesUtilClass.getAttackTypes().MELEE;
 }
 
-// function attackEnemyAtPosition(x, y)
-// {
-//     this.attacking = true;
-// }
 
 function GetAllEnemiesAttackableByMelee()
 {
@@ -86,7 +106,7 @@ function PlayerActionsState(stage, models, levelView)
     this.selectedModel = null;
 
     this.actionableCells = [];
-    this.selectCell = null;
+    this.selectedPosition = null;
     this.actionContextMenuView = new ActionContextMenuViewClass(this.stage, {x: 0, y:0});
     
     // movement variables
@@ -110,15 +130,16 @@ PlayerActionsState.prototype.update = function()
 {
     function filterFunction(cell)
     {
-        return _.isEqual(cell.position, this.movePositionSelected);
+        return _.isEqual(cell.position, this.selectedPosition);
     }
 
     if (this.finishedMove)   
     {
-        this.levelView.clearSelectableTiles(moveCharacter);
-        this.levelModel.moveModel(this.selectedModel, this.movePositionSelected);
+        this.levelView.clearSelectableTiles(actionableCellSelected);
+        this.actionableCells = [];
+        this.levelModel.moveModel(this.selectedModel, this.selectedPosition);
         let selectedPosition = _.find(this.movementPositions, filterFunction, this);
-        this.selectedModel.deploymentCard.currentSpeed = this.selectedModel.deploymentCard.currentSpeed - selectedPosition.moveCount;
+        this.selectedModel.currentSpeed = this.selectedModel.currentSpeed - selectedPosition.moveCount;
         this.movePositionSelected = null;
         this.finishedMove = false;
         

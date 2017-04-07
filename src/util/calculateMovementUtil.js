@@ -117,7 +117,7 @@ module.exports = {
             }
         }
 
-        let speed = model.deploymentCard.currentSpeed;
+        let speed = model.currentSpeed;
         let moveCount = 0;
         let position = model.position;
         let openCells = [];
