@@ -49,21 +49,10 @@ function actionableCellSelected(x, y)
 }
 
 
-function canRangeAttack()
-{
-    return this.selectedModel.deploymentCard.attackType === DeploymentCardsTypesUtilClass.getAttackTypes().RANGE;
-}
-
-function canMeleeAttack()
-{
-    return this.selectedModel.deploymentCard.attackType === DeploymentCardsTypesUtilClass.getAttackTypes().MELEE;
-}
-
-
 function GetAllEnemiesAttackableByMelee()
 {
     let meleeEnemies = [];
-    if (canMeleeAttack.call(this))
+    if (this.selectedModel.canMeleeAttack())
     {
         let surroundingArea = CalculateMovementUtilClass.getSurroundingArea(this.selectedModel.position, this.levelModel);
         for (let i = 0; i < surroundingArea.length; ++i)
@@ -81,7 +70,7 @@ function GetAllEnemiesAttackableByRange()
     let rangeEnemies = [];
     let selectedModelPos = this.selectedModel.position;
 
-    if (canRangeAttack.call(this))
+    if (this.selectedModel.canRangeAttack())
     {
         let enemyArmy = this.gameModel.getEnemyArmy(this.selectedModel.deploymentCard.affiliation);
         for (let i = 0; i < enemyArmy.length; ++i)

@@ -1,4 +1,6 @@
-let DeploymentCardModelClass =require("./deploymentCardModel.js"); 
+let DeploymentCardModelClass =require("./deploymentCardModel.js");
+let DeploymentCardsTypesUtilClass = require("./../util/deploymentCardsTypesUtil.js");
+
 
 function DeploymentCardFigureModel(deploymentCard, position, isRotated, groupId, modelId)
 {
@@ -12,5 +14,15 @@ function DeploymentCardFigureModel(deploymentCard, position, isRotated, groupId,
     this.groupdId = groupId;
     this.modelId = modelId;
 }
+
+DeploymentCardFigureModel.prototype.canRangeAttack = function()
+{
+    return this.deploymentCard.attackType === DeploymentCardsTypesUtilClass.getAttackTypes().RANGE;
+};
+
+DeploymentCardFigureModel.prototype.canMeleeAttack = function()
+{
+    return this.deploymentCard.attackType === DeploymentCardsTypesUtilClass.getAttackTypes().MELEE;
+};
 
 module.exports = DeploymentCardFigureModel;
