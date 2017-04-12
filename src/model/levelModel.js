@@ -93,7 +93,7 @@ LevelModel.prototype.setGridContent = function(model)
 	}
 };
 
-LevelModel.prototype.moveModel = function(model, position)
+LevelModel.prototype.moveModel = function(model, position, moveCount)
 {
 	let oldPosition = model.position;
 
@@ -107,6 +107,7 @@ LevelModel.prototype.moveModel = function(model, position)
 
 	// set the model position - perhaps not ideal in here
 	model.position = position;
+	model.currentSpeed = model.currentSpeed - moveCount;
 };
 
 LevelModel.prototype.getGridLength = function ()

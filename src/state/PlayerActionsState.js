@@ -1,12 +1,21 @@
-let CalculateMovementUtilClass = require ("./../util/calculateMovementUtil.js");
-let DeploymentCardsTypesUtilClass = require("./../util/deploymentCardsTypesUtil.js");
-let ActionContextMenuViewClass = require("./../view/actionContextMenuView.js");
+let CalculateMovementUtilClass = require ("../util/calculateMovementUtil.js");
+let DeploymentCardsTypesUtilClass = require("../util/deploymentCardsTypesUtil.js");
+let ActionContextMenuViewClass = require("../view/actionContextMenuView.js");
+
+let PlayerActionToMovePlayerTransitionDataClass = require("../state/transitions/PlayerActionToMovePlayerTransitionData.js");
 
 let _ = require('underscore');
 
 function moveFigure()
 {
-    this.finishedMove = true;
+    function filterFunction(cell)
+    {
+        return _.isEqual(cell.position, this.selectedPosition);
+    }
+    this.transition = "MOVE_MODEL";
+    let selectedPosition = _.find(this.movementPositions, filterFunction, this);
+    this.gameModel.transitionData = new PlayerActionToMovePlayerTransitionDataClass(this.selectedModel, this.selectedPosition, selectedPosition.moveCount);
+    //this.finishedMove = true;
 }
 
 function attackEnemyAtPosition()
@@ -107,39 +116,32 @@ function PlayerActionsState(stage, models, levelView)
     // attacking variables
     this.attackableEnemies = [];
     this.attacking = false;
+
+    this.transition = null;
+    this.transitionData = null;
 }
 
-PlayerActionsState.prototype.start = function()
+PlayerActionsState.prototype.start = function(transitionData)
 {
-    this.selectedModel = this.gameModel.selectedModel;
+    this.selectedModel = transitionData.selectedModel;
     this.findAllActionableCells();
 };
 
 PlayerActionsState.prototype.update = function()
 {
-    function filterFunction(cell)
+    if (this.transition !== null)
     {
-        return _.isEqual(cell.position, this.selectedPosition);
+        return this.transition;
     }
-
-    if (this.finishedMove)   
-    {
-        this.levelView.clearSelectableTiles(actionableCellSelected);
-        this.actionableCells = [];
-        this.levelModel.moveModel(this.selectedModel, this.selectedPosition);
-        let selectedPosition = _.find(this.movementPositions, filterFunction, this);
-        this.selectedModel.currentSpeed = this.selectedModel.currentSpeed - selectedPosition.moveCount;
-        this.movePositionSelected = null;
-        this.finishedMove = false;
-        
-        this.findAllActionableCells();
-    }
-
+    
     return null;
 };
 
 PlayerActionsState.prototype.end = function()
 {
+    this.levelView.clearSelectableTiles(actionableCellSelected);
+    this.actionableCells = [];
+    this.transition = null;
 };
 
 PlayerActionsState.prototype.findAllActionableCells = function()

@@ -8,7 +8,7 @@ function GameModel(states, currentState)
     this.currentSide = DeploymentCardsTypeUtilClass.getAffiliations().REBEL;
     this.states = null;
     this.currentState = null;
-    this.selectedModel = null;
+    this.transitionData = null;
     this.empire = {commandCards: null, deploymentCards: [], aliveFigures: []};
     this.rebel = {commandCards: null, deploymentCards: [], aliveFigures: []};
     this.createArmies();
@@ -71,17 +71,7 @@ GameModel.prototype.createArmies = function()
 GameModel.prototype.setStartPositions = function(levelModel)
 {
     let rebelFigure = new DeploymentCardFigureModelClass(this.rebel.deploymentCards[0], {x:0, y:0}, false, 0, 0);
-    //     position: {x: 0, y: 0},
-    //     isRotated: false,
-    //     deploymentCard: this.rebel.deploymentCards[0]
-    // };
-
     let empireFigure = new DeploymentCardFigureModelClass(this.empire.deploymentCards[0], {x:4, y:4}, false, 0, 0);
-    // let empireDeploymentCard = {
-    //     position: {x: 4, y: 4},
-    //     isRotated: false,
-    //     deploymentCard: this.empire.deploymentCards[0]
-    // };
 
     this.rebel.aliveFigures.push(rebelFigure);
     this.empire.aliveFigures.push(empireFigure);
@@ -104,7 +94,8 @@ GameModel.prototype.updateState = function()
         this.currentState.end();
         let newState = this.states[changeState];
         this.currentState = newState;
-        this.currentState.start();
+        this.currentState.start(this.transitionData);
+        this.transitionData = null;
     }
 };
 

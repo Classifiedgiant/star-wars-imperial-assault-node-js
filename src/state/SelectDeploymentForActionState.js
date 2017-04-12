@@ -1,9 +1,13 @@
 let DeploymentCardsTypeUtilClass = require("../util/deploymentCardsTypesUtil.js");
 let LevelModelUtilClass = require("../util/levelModelUtil.js");
 
+// transitionData
+let SelectDeploymentForActionToPlayerActionTransitionDataClass = require("./transitions/SelectDeploymentForActionToPlayerActionTransitionData.js");
+
 function onClick(x, y)
 {
-    this.gameModel.selectedModel = this.levelModel.getGridContent(x, y).models[0]; 
+    let model = this.levelModel.getGridContent(x, y).models[0];
+    this.gameModel.transitionData = new SelectDeploymentForActionToPlayerActionTransitionDataClass(model);
 }
 
 function SelectDeploymentForActionState(models, views)
@@ -42,10 +46,10 @@ SelectDeploymentForActionState.prototype.start = function()
 
 SelectDeploymentForActionState.prototype.update = function()
 {
-    if (this.gameModel.selectedModel !== null)
+    if (this.gameModel.transitionData !== null)
         return "PLAYERS_ACTIONS";
-    else 
-        return null;
+    
+    return null;
 };
 
 SelectDeploymentForActionState.prototype.end = function()
