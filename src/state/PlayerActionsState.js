@@ -2,7 +2,9 @@ let CalculateMovementUtilClass = require ("../util/calculateMovementUtil.js");
 let DeploymentCardsTypesUtilClass = require("../util/deploymentCardsTypesUtil.js");
 let ActionContextMenuViewClass = require("../view/actionContextMenuView.js");
 
-let PlayerActionToMovePlayerTransitionDataClass = require("../state/transitions/PlayerActionToMovePlayerTransitionData.js");
+// transition
+let PlayerActionToMovePlayerTransitionDataClass = require("../state/transitions/playerActionToMovePlayerTransitionData.js");
+let PlayerActionToAttackRangeTransitionDataClass = require("../state/transitions/playerActionToAttackRangeTransitionData.js");
 
 let _ = require('underscore');
 
@@ -15,12 +17,13 @@ function moveFigure()
     this.transition = "MOVE_MODEL";
     let selectedPosition = _.find(this.movementPositions, filterFunction, this);
     this.gameModel.transitionData = new PlayerActionToMovePlayerTransitionDataClass(this.selectedModel, this.selectedPosition, selectedPosition.moveCount);
-    //this.finishedMove = true;
 }
 
 function attackEnemyAtPosition()
 {
-    this.attacking = true;
+    let enemy = this.levelModel.getGridContent(this.selectedPosition.x, this.selectedPosition.y);
+    this.transition = "ATTACK_ENEMY_RANGED";
+    this.gameModel.transitionData = new PlayerActionToAttackRangeTransitionDataClass(this.selectedModel, enemy);
 }
 
 function meleeEnemyAtPosition()
@@ -109,13 +112,9 @@ function PlayerActionsState(stage, models, levelView)
     
     // movement variables
     this.movementPositions= null;
-    this.cellPositions= null;
-    this.movePositionSelected = null;
-    this.finishedMove = false;
 
     // attacking variables
     this.attackableEnemies = [];
-    this.attacking = false;
 
     this.transition = null;
     this.transitionData = null;
@@ -146,11 +145,11 @@ PlayerActionsState.prototype.end = function()
 
 PlayerActionsState.prototype.findAllActionableCells = function()
 {
-    this.cellPositions = this.calculateMovements();
+    let cellPositions = this.calculateMovements();
     this.attackableEnemies = this.calculateAttackActions();
-    for (let i = 0; i < this.cellPositions.length; ++i)
+    for (let i = 0; i < cellPositions.length; ++i)
     {
-        this.actionableCells.push({position: this.cellPositions[i], canMove:true, canMelee:false, canRange:false, canInteract:false});
+        this.actionableCells.push({position: cellPositions[i], canMove:true, canMelee:false, canRange:false, canInteract:false});
     }
 
     for (let i = 0; i < this.attackableEnemies.length; ++i)
@@ -205,10 +204,6 @@ PlayerActionsState.prototype.calculateAttackActions = function()
     }
 
     return attackableEnemies;
-
-    // This can be the same as 
-    //return _.pluck(this.attackableEnemies, 'enemy');
-    //this.levelView.setTilesToSelect(cellPositions, attackEnemyAtPosition, this); 
 };
 
 

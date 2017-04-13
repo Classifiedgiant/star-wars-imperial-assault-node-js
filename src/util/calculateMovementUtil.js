@@ -9,6 +9,11 @@ function checkLevelBounds(position, levelModel)
 }
 
 module.exports = {
+    getDistance: function(from, to)
+    {
+
+    },
+    
     getSurroundingArea: function(position, levelModel)
     {
         let adjacentAreas = [];

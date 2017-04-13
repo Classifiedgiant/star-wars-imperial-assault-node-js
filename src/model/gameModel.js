@@ -23,7 +23,6 @@ GameModel.prototype.setupGame = function(states, currentState)
 
 GameModel.prototype.createArmies = function()
 {
-    //let deploymentCardUtil = new DeploymentCardsTypeUtilClass();
     let defenseDice = DeploymentCardsTypeUtilClass.getDefenseDiceTypes();
     let attackTypes = DeploymentCardsTypeUtilClass.getAttackTypes();
     let attackDice = DeploymentCardsTypeUtilClass.getAttackDiceTypes();
