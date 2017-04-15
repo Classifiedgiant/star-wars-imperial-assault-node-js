@@ -173,7 +173,7 @@ PlayerActionsState.prototype.findAllActionableCells = function()
 
 PlayerActionsState.prototype.calculateMovements = function()
 {
-    this.movementPositions = CalculateMovementUtilClass.calculateMovementLength(this.levelModel, this.selectedModel);
+    this.movementPositions = CalculateMovementUtilClass.calculateMovementArea(this.levelModel, this.selectedModel);
     let movementCells = _.pluck(this.movementPositions, 'position'); 
     this.levelModel.showMovementHighlight(movementCells);
     return movementCells;

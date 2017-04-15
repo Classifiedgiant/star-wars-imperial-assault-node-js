@@ -1,9 +1,10 @@
 let CalculateMovementUtilClass = require("../util/CalculateMovementUtil.js");
 
 
-function AttackRangeState()
+function AttackRangeState(models)
 {
-    
+    this._levelModel = models.LevelModel;
+    this._gameModel = models.GameModel;
 }
 
 AttackRangeState.prototype.start = function(transitionData) 
@@ -18,7 +19,7 @@ AttackRangeState.prototype.start = function(transitionData)
     // should do some checks here to see if:
     // There is more than one model 
     // The one model is an enemy model
-    this._calculateRange = CalculateMovementUtilClass.getDistance(this._selectedModel.position, this._target.models[0].position);
+    this._calculateRange = CalculateMovementUtilClass.getShortestPath(this._levelModel, this._selectedModel.position, this._target.models[0].position);
 };
 
 AttackRangeState.prototype.update = function()
