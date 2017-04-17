@@ -25,4 +25,14 @@ DeploymentCardFigureModel.prototype.canMeleeAttack = function()
     return this.deploymentCard.attackType === DeploymentCardsTypesUtilClass.getAttackTypes().MELEE;
 };
 
+DeploymentCardFigureModel.prototype.getAttackDice = function()
+{
+    return this.deploymentCard.attackDice;
+};
+
+DeploymentCardFigureModel.prototype.getDefenseDice = function()
+{
+    return this.deploymentCard.defenseDice;
+};
+
 module.exports = DeploymentCardFigureModel;

@@ -1,5 +1,7 @@
 let CalculateMovementUtilClass = require("../util/CalculateMovementUtil.js");
 
+let AttackResultCalculatorUtilClass = require("../util/attackResultCalculatorUtil.js");
+
 
 function AttackRangeState(models)
 {
@@ -19,12 +21,12 @@ AttackRangeState.prototype.start = function(transitionData)
     // should do some checks here to see if:
     // There is more than one model 
     // The one model is an enemy model
-    this._calculateRange = CalculateMovementUtilClass.getShortestPath(this._levelModel, this._selectedModel.position, this._target.models[0].position);
+    this._rangePath = CalculateMovementUtilClass.getShortestPath(this._levelModel, this._selectedModel.position, this._target.models[0].position);
+    AttackResultCalculatorUtilClass.calculateAttackResult(this._selectedModel.getAttackDice(), this._target.models[0].getDefenseDice(), this._rangePath.pathSize);
 };
 
 AttackRangeState.prototype.update = function()
 {
-
 };
 
 AttackRangeState.prototype.end = function()
