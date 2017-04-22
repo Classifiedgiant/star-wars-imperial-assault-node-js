@@ -36,7 +36,7 @@ App.prototype.setupGame = function()
             SELECT_DEPLOYMENT_FOR_ACTIONS: new SelectDeploymentForActionClass(self.models, self.views), 
             PLAYERS_ACTIONS: new PlayerActionStateClass(self.stage, self.models, self.views.LevelView),
             MOVE_MODEL: new MovePlayerStateClass(self.models, self.views.LevelView),
-            ATTACK_ENEMY_RANGED: new AttackRangeStateClass(self.models)
+            ATTACK_ENEMY_RANGED: new AttackRangeStateClass(self.stage, self.models)
         };
     }
 

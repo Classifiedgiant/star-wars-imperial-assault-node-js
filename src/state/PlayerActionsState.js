@@ -1,10 +1,13 @@
-let CalculateMovementUtilClass = require ("../util/calculateMovementUtil.js");
-let DeploymentCardsTypesUtilClass = require("../util/deploymentCardsTypesUtil.js");
-let ActionContextMenuViewClass = require("../view/actionContextMenuView.js");
-
 // transition
 let PlayerActionToMovePlayerTransitionDataClass = require("../state/transitions/playerActionToMovePlayerTransitionData.js");
 let PlayerActionToAttackRangeTransitionDataClass = require("../state/transitions/playerActionToAttackRangeTransitionData.js");
+
+// context
+let PlayerActionContextMenuViewClass = require("../view/playerActionContextMenuView.js");
+
+// util
+let CalculateMovementUtilClass = require ("../util/calculateMovementUtil.js");
+let DeploymentCardsTypesUtilClass = require("../util/deploymentCardsTypesUtil.js");
 
 let _ = require('underscore');
 
@@ -50,7 +53,7 @@ function actionableCellSelected(x, y)
         if (actions.length > 1) console.log("PlayerActionsState.actionableCellSelected: found more than one cell in actionable cell - only using first");
         
         this.selectedPosition = actions[0].position;
-        this.actionContextMenuView.displayMenu(actions[0], 
+        this.playerActionContextMenuView.displayMenu(actions[0], 
             this,
             moveFigure,
             attackEnemyAtPosition,
@@ -108,7 +111,7 @@ function PlayerActionsState(stage, models, levelView)
 
     this.actionableCells = [];
     this.selectedPosition = null;
-    this.actionContextMenuView = new ActionContextMenuViewClass(this.stage, {x: 0, y:0});
+    this.playerActionContextMenuView = new PlayerActionContextMenuViewClass(this.stage, {x: 0, y:0});
     
     // movement variables
     this.movementPositions= null;
@@ -138,6 +141,7 @@ PlayerActionsState.prototype.update = function()
 
 PlayerActionsState.prototype.end = function()
 {
+    this.playerActionContextMenuView.clear();
     this.levelView.clearSelectableTiles(actionableCellSelected);
     this.actionableCells = [];
     this.transition = null;

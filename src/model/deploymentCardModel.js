@@ -12,6 +12,7 @@ function DeploymentCardModel(
     attackDice,
     traits,
     naturalAbilities,
+    surgeAbilities,
     passiveAbilities,
     actionAbilities)
 {
@@ -30,6 +31,7 @@ function DeploymentCardModel(
 
     this.traits = traits;
     this.naturalAbilities = naturalAbilities;
+    this.surgeAbilities = surgeAbilities;
     this.passiveAbilities = passiveAbilities;
     this.actionAbilities = actionAbilities;
 }

@@ -41,7 +41,8 @@ GameModel.prototype.createArmies = function()
         attackTypes.RANGE,
         [attackDice.BLUE, attackDice.GREEN, attackDice.YELLOW],
         ["Force User"], // could be placed into a group somewhere
-        null,
+        [{type: "Combat-Attack", value: {damage: 1, surge: 0}}],
+        [{damage: 2}, {health: 2}, {accuracy: 2}],
         null,
         null);
 
@@ -59,6 +60,7 @@ GameModel.prototype.createArmies = function()
         attackTypes.MELEE,
         [attackDice.RED, attackDice.RED, attackDice.YELLOW],
         ["Force User", "Leader", "Brawler"],
+        null,
         null,
         null, 
         null);

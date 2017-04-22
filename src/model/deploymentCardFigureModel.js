@@ -35,4 +35,30 @@ DeploymentCardFigureModel.prototype.getDefenseDice = function()
     return this.deploymentCard.defenseDice;
 };
 
+DeploymentCardFigureModel.prototype.getSurgeAbilities = function()
+{
+    return this.deploymentCard.surgeAbilities;
+};
+
+DeploymentCardFigureModel.prototype.applyNaturalAbilities = function(attackResult)
+{
+    console.assert(typeof(attackResult) === "object");
+    console.assert(typeof(attackResult.damage) === "number");
+    console.assert(typeof(attackResult.surge) === "number");
+
+    let naturalAbilities = this.deploymentCard.naturalAbilities;
+    for (let i = 0; i < naturalAbilities.length; ++i)
+    {
+        let ability = naturalAbilities[i];
+        if (ability.type === "Combat-Attack")
+        {
+            attackResult.damage += ability.value.damage;
+            attackResult.surge += ability.value.surge;
+
+        }
+    }
+
+    return attackResult;
+};
+
 module.exports = DeploymentCardFigureModel;

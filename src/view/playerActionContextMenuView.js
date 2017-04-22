@@ -1,9 +1,4 @@
-function clear()
-{
-    this._container.removeChildren();
-}
-
-function ActionContextMenuView(stage, displayPosition)
+function PlayerActionContextMenuView(stage, displayPosition)
 {
     this._stage = stage;
     this._displayPosition = displayPosition;
@@ -12,9 +7,9 @@ function ActionContextMenuView(stage, displayPosition)
     this._stage.addChild(this._container);
 }
 
-ActionContextMenuView.prototype.displayMenu = function(actions, callbackContext, moveCallback, rangeCallback, meleeCallback, interactCallback) 
+PlayerActionContextMenuView.prototype.displayMenu = function(actions, callbackContext, moveCallback, rangeCallback, meleeCallback, interactCallback) 
 {
-    clear.call(this);
+    this.clear();
     let buttonHeight = 25;
     let buttonYPos = 0;  
     this._container.x = this._displayPosition.x;
@@ -27,7 +22,7 @@ ActionContextMenuView.prototype.displayMenu = function(actions, callbackContext,
         moveButton.buttonMode = true;
         moveButton.on("pointerup", moveCallback.bind(callbackContext));
         moveButton.x = 0;
-        moveButton.y = 0;
+        moveButton.y = buttonYPos;
         buttonYPos += buttonHeight;
         this._container.addChild(moveButton);
     }
@@ -69,4 +64,9 @@ ActionContextMenuView.prototype.displayMenu = function(actions, callbackContext,
     }
 };
 
-module.exports = ActionContextMenuView;
+PlayerActionContextMenuView.prototype.clear = function()
+{
+    this._container.removeChildren();
+};
+
+module.exports = PlayerActionContextMenuView;

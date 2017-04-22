@@ -9,7 +9,7 @@ let WhiteDiceModelClass = require("../model/dice/whiteDiceModel.js");
 let DeploymentCardsTypeUtilClass = require("./deploymentCardsTypesUtil.js");
 
 module.exports = {
-    calculateAttackResult: function(attackDice, defenseDice, requiredDistance)
+    rollDice: function(attackDice, defenseDice, requiredDistance)
     {
         let defenseDiceTypes = DeploymentCardsTypeUtilClass.getDefenseDiceTypes();
         let attackDiceTypes = DeploymentCardsTypeUtilClass.getAttackDiceTypes();
@@ -42,6 +42,14 @@ module.exports = {
             combinedDefenseResults.evade = rollResult.evade || combinedDefenseResults.evade;
         }
 
+        return {
+            damage: Math.max(combinedAttackResults.damage - combinedDefenseResults.damage, 0),
+            surge: Math.max(combinedAttackResults.surge - combinedDefenseResults.surge, 0)
+        };
+    },
+
+    evaluateRangeAttack: function()
+    {
         // now the result
         if (combinedDefenseResults.evade)
         {
@@ -55,9 +63,5 @@ module.exports = {
             return {damage: 0, surge: 0};
         }
 
-        return {
-            damage: Math.max(combinedAttackResults.damage - combinedDefenseResults.damage, 0),
-            surge: Math.max(combinedAttackResults.surge - combinedDefenseResults.surge, 0)
-        };
     }
 };
