@@ -61,4 +61,16 @@ DeploymentCardFigureModel.prototype.applyNaturalAbilities = function(attackResul
     return attackResult;
 };
 
+DeploymentCardFigureModel.prototype.applyDamage = function(damage)
+{
+    console.assert(typeof(damage) === "number");
+    this.currentHealth -= damage;
+};
+
+DeploymentCardFigureModel.prototype.isDead = function()
+{
+    return this.currentHealth <= 0;
+};
+
+
 module.exports = DeploymentCardFigureModel;

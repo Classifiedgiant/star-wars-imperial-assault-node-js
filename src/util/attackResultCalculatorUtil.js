@@ -9,7 +9,7 @@ let WhiteDiceModelClass = require("../model/dice/whiteDiceModel.js");
 let DeploymentCardsTypeUtilClass = require("./deploymentCardsTypesUtil.js");
 
 module.exports = {
-    rollDice: function(attackDice, defenseDice, requiredDistance)
+    rollDice: function(attackDice, defenseDice)
     {
         let defenseDiceTypes = DeploymentCardsTypeUtilClass.getDefenseDiceTypes();
         let attackDiceTypes = DeploymentCardsTypeUtilClass.getAttackDiceTypes();
@@ -44,24 +44,26 @@ module.exports = {
 
         return {
             damage: Math.max(combinedAttackResults.damage - combinedDefenseResults.damage, 0),
-            surge: Math.max(combinedAttackResults.surge - combinedDefenseResults.surge, 0)
+            //surge: Math.max(combinedAttackResults.surge - combinedDefenseResults.surge, 0),
+            surge: 0,
+            distance: combinedAttackResults.distance,
+            evaded: combinedDefenseResults.evade
         };
     },
 
-    evaluateRangeAttack: function()
+    evaluateRangeAttack: function(attackResults, requiredDistance, targetedModel)
     {
         // now the result
-        if (combinedDefenseResults.evade)
+        if (attackResults.evaded)
         {
             console.log("Attack Evaded");
-            return {damage: 0, surge: 0};
         }
 
-        if (combinedAttackResults.distance < requiredDistance)
+        if (attackResults.distance < requiredDistance)
         {
             console.log("Attack out of range. Dist: " + combinedAttackResults.distance + " Required Distance: " + requiredDistance);
-            return {damage: 0, surge: 0};
         }
 
+        return attackResults.damage;
     }
 };
