@@ -34,9 +34,8 @@ LevelView.prototype.render = function()
 	{
 		let cellGraphics = this.levelGraphics[i];
 		cellGraphics.clear();
-		let row = Math.floor(i / this.model.getGridLength());
-		let col = i % this.model.getGridLength();
-		let cellContent = this.model.getGridContent(col, row);
+		let position = LevelModelUtilClass.indexToXY(this.model.getGridLength(), i);
+		let cellContent = this.model.getGridContent(position.x, position.y);
 		let cellContentTypes = this.model.getGridCellTypes();
 		if (cellContent.type === cellContentTypes.EMPTY)
 		{
@@ -47,7 +46,7 @@ LevelView.prototype.render = function()
 				for (let i = 0; i < possibleMovePositions.length; ++i)
 				{
 					let possibleMovePosition = possibleMovePositions[i];
-					if (_.isEqual(possibleMovePosition, {x: col, y: row}))
+					if (_.isEqual(possibleMovePosition, {x: position.x, y: position.y}))
 					{
 						found = true;
 						break;
@@ -85,7 +84,7 @@ LevelView.prototype.render = function()
 			console.log("LevelView.ctor: unknown cellContent :" + cellContent);
 
 		let cellSize = this.model.cellLength;
-		cellGraphics.drawRect(row * cellSize, col * cellSize, cellSize, cellSize);
+		cellGraphics.drawRect(position.x * cellSize, position.y * cellSize, cellSize, cellSize);
 	}
 };
 

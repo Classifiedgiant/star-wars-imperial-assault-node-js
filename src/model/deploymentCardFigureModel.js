@@ -2,17 +2,16 @@ let DeploymentCardModelClass =require("./deploymentCardModel.js");
 let DeploymentCardsTypesUtilClass = require("./../util/deploymentCardsTypesUtil.js");
 
 
-function DeploymentCardFigureModel(deploymentCard, position, isRotated, groupId, modelId)
+function DeploymentCardFigureModel(deploymentCard, position, isRotated, groupId)
 {
     this.deploymentCard = deploymentCard;
     this.position = position;
     this.isRotated = true;
     this.currentSpeed = deploymentCard.baseSpeed;
-    this.currentHealth = deploymentCard.maxHealth;
+    this.currentHealth = deploymentCard.baseHealth;
     this.items = [];
 
-    this.groupdId = groupId;
-    this.modelId = modelId;
+    this.groupId = groupId;
 }
 
 DeploymentCardFigureModel.prototype.canRangeAttack = function()

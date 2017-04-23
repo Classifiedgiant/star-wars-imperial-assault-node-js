@@ -3,14 +3,16 @@ let DeploymentCardFigureModelClass = require("./deploymentCardFigureModel.js");
 
 let DeploymentCardsTypeUtilClass = require("./../util/deploymentCardsTypesUtil.js");
 
+let _ = require("underscore");
+
 function GameModel(states, currentState)
 {
     this.currentSide = DeploymentCardsTypeUtilClass.getAffiliations().REBEL;
     this.states = null;
     this.currentState = null;
     this.transitionData = null;
-    this.empire = {commandCards: null, deploymentCards: [], aliveFigures: []};
-    this.rebel = {commandCards: null, deploymentCards: [], aliveFigures: []};
+    this.empire = {commandCards: null, deploymentCards: [], aliveFigures: [], victoryPoints: 0};
+    this.rebel = {commandCards: null, deploymentCards: [], aliveFigures: [], victoryPoints: 0};
     this.createArmies();
 }
 
@@ -47,38 +49,63 @@ GameModel.prototype.createArmies = function()
         null);
 
     // empire
-    let darthVader = new DeploymentCardModelClass(
-        "Darth Vader",
+    // let darthVader = new DeploymentCardModelClass(
+    //     "Darth Vader",
+    //     DeploymentCardsTypeUtilClass.getAffiliations().EMPIRE,
+    //     18,
+    //     1,
+    //     true,
+    //     [1,1],
+    //     16,
+    //     4,
+    //     [defenseDice.BLACK,defenseDice.BLACK],
+    //     attackTypes.MELEE,
+    //     [attackDice.RED, attackDice.RED, attackDice.YELLOW],
+    //     ["Force User", "Leader", "Brawler"],
+    //     null,
+    //     null,
+    //     null, 
+    //     null);
+
+    let stormtrooper = new DeploymentCardModelClass(
+        "Stormtrooper",
         DeploymentCardsTypeUtilClass.getAffiliations().EMPIRE,
-        18,
-        1,
-        true,
-        [1,1],
-        16,
+        6,
+        3,
+        false,
+        [1, 1],
+        3,
         4,
-        [defenseDice.BLACK,defenseDice.BLACK],
-        attackTypes.MELEE,
-        [attackDice.RED, attackDice.RED, attackDice.YELLOW],
-        ["Force User", "Leader", "Brawler"],
+        [defenseDice.BLACK],
+        attackTypes.RANGE,
+        [attackDice.BLUE, attackDice.GREEN],
+        ["Trooper"],
         null,
+        [{damage: 1}, {accuracy: 2}],
         null,
-        null, 
         null);
 
     this.rebel.deploymentCards.push(lukeSkywalker);
-    this.empire.deploymentCards.push(darthVader);
+    this.empire.deploymentCards.push(stormtrooper);
 };
 
 GameModel.prototype.setStartPositions = function(levelModel)
 {
-    let rebelFigure = new DeploymentCardFigureModelClass(this.rebel.deploymentCards[0], {x:0, y:0}, false, 0, 0);
-    let empireFigure = new DeploymentCardFigureModelClass(this.empire.deploymentCards[0], {x:4, y:4}, false, 0, 0);
-
+    let rebelFigure = new DeploymentCardFigureModelClass(this.rebel.deploymentCards[0], {x:0, y:0}, false, 0);
     this.rebel.aliveFigures.push(rebelFigure);
-    this.empire.aliveFigures.push(empireFigure);
-
     levelModel.setGridContent(rebelFigure);
-    levelModel.setGridContent(empireFigure);
+
+    let numberOfModels = this.empire.deploymentCards[0].figureCount;
+    let groupCount = 0;
+    let xPos = 2;
+
+    for (let i = 0; i < numberOfModels; ++i)
+    {
+        let trooperFigure = new DeploymentCardFigureModelClass(this.empire.deploymentCards[0], {x:xPos, y:4}, false, groupCount);
+        this.empire.aliveFigures.push(trooperFigure);
+        levelModel.setGridContent(trooperFigure);
+        xPos++;
+    }
 };
 
 GameModel.prototype.getCurrentSide = function()
@@ -108,6 +135,36 @@ GameModel.prototype.getEnemyArmy = function(affiliation)
         return this.empire.aliveFigures;
     else 
         console.log("GameModel.getEnemyArmy: affiliation is not expected: " + affiliation);
+};
+
+GameModel.prototype.removeDeadModel = function(model)
+{
+    function filterFunction(figure)
+    {
+        return _.isEqual(figure, model);
+    }
+
+    function groupFilterFunction(figure)
+    {
+        return figure.groupId === model.groupId;
+    }
+
+    let enemyArmy = this.getEnemyArmy(this.currentSide);
+
+    _.reject(enemyArmy, filterFunction, this);
+
+    // check if model is part of a group
+    if (_.find(enemyArmy, groupFilterFunction, this) === undefined)
+    {
+        // just killed the last group member
+        if (this.currentSide === DeploymentCardsTypeUtilClass.getAffiliations().EMPIRE)
+            this.empire.victoryPoints += model.deploymentCard.deployCost;
+        else if (this.currentSide === DeploymentCardsTypeUtilClass.getAffiliations().REBEL)
+            this.rebel.victoryPoints += model.deploymentCard.deployCost;
+
+        else 
+            console.log("GameModel.removeDeadModel: unknown model affiliation");
+    }
 };
 
 module.exports = GameModel;

@@ -79,10 +79,14 @@ LevelModel.prototype.getGridContent = function(col, row)
 	return this.grid[col][row];
 };
 
+LevelModel.prototype.getGridPositionFroModel = function(model)
+{
+	return this.getGridContent(model.position.x, model.position.y);
+};
+
 LevelModel.prototype.setGridContent = function(model)
 {
-	let position = model.position;
-	let cellContent = this.getGridContent(position.x, position.y);
+	let cellContent = this.getGridPositionFroModel(model);
 	if (cellContent.type === this.gridCellTypes.EMPTY)
 	{
 		cellContent.models.push(model);
@@ -91,6 +95,17 @@ LevelModel.prototype.setGridContent = function(model)
 	{
 		console.log("LevelModel.setGridContent: trying to set a model on a blocked cell");
 	}
+};
+
+LevelModel.prototype.removeModelFromGrid = function(model)
+{
+	function filterFunction(element)
+	{
+		return _.isEqual(model, element);
+	}
+
+	cellContent = this.getGridPositionFroModel(model);
+	cellContent.models = _.reject(cellContent.models, filterFunction, this);
 };
 
 LevelModel.prototype.moveModel = function(model, position, moveCount)

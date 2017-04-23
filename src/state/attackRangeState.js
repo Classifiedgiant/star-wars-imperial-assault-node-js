@@ -80,6 +80,12 @@ AttackRangeState.prototype.update = function()
         let finalDamage = AttackResultCalculatorUtilClass.evaluateRangeAttack(this._attackResults,  this._rangePath.pathSize, this._target);
         this._target.models[0].applyDamage(finalDamage);
 
+        if (this._target.models[0].isDead())
+        {
+            this._gameModel.removeDeadModel(this._target.models[0]);
+            this._levelModel.removeModelFromGrid(this._target.models[0]);
+        }
+
         this._gameModel.transitionData = new AttackRangeStateToPlayerActionTransitionDataClass(this._selectedModel);
         return "PLAYERS_ACTIONS";
     }
@@ -91,7 +97,7 @@ AttackRangeState.prototype.update = function()
 
 AttackRangeState.prototype.end = function()
 {
-    console.log("We have left");
+    this._surgeContextMenuView.clear();
 };
 
 module.exports = AttackRangeState;

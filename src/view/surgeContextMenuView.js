@@ -1,8 +1,3 @@
-function clear()
-{
-    this._container.removeChildren();
-}
-
 function SurgeContextMenuView(stage, displayPosition)
 {
     this._stage = stage;
@@ -14,7 +9,7 @@ function SurgeContextMenuView(stage, displayPosition)
 
 SurgeContextMenuView.prototype.displayMenu = function(surgeAbilities, callbackContext, callback) 
 {
-    clear.call(this);
+    this.clear();
     let buttonHeight = 25;
     let buttonYPos = 0;  
     this._container.x = this._displayPosition.x;
@@ -34,6 +29,11 @@ SurgeContextMenuView.prototype.displayMenu = function(surgeAbilities, callbackCo
         buttonYPos += buttonHeight;
         this._container.addChild(surgeButton);
     }
+};
+
+SurgeContextMenuView.prototype.clear = function()
+{
+    this._container.removeChildren();
 };
 
 module.exports = SurgeContextMenuView;

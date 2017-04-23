@@ -44,8 +44,8 @@ module.exports = {
 
         return {
             damage: Math.max(combinedAttackResults.damage - combinedDefenseResults.damage, 0),
-            //surge: Math.max(combinedAttackResults.surge - combinedDefenseResults.surge, 0),
-            surge: 0,
+            surge: Math.max(combinedAttackResults.surge - combinedDefenseResults.surge, 0),
+            //surge: 0,
             distance: combinedAttackResults.distance,
             evaded: combinedDefenseResults.evade
         };
