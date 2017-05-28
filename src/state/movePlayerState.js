@@ -1,5 +1,5 @@
 // transitionData
-let MovePlayerToPlayerActionTransitionDataClass = require("./transitions/movePlayerToPlayerActionTransitionData.js");
+let ToPlayerActionTransitionDataClass = require("./transitions/ToPlayerActionTransitionData.js");
 
 function MovePlayerState(models, levelView)
 {
@@ -26,7 +26,7 @@ MovePlayerState.prototype.start = function(transitionData)
 
 MovePlayerState.prototype.update = function()
 {
-    this._gameModel.transitionData = new MovePlayerToPlayerActionTransitionDataClass(this._movingModel);
+    this._gameModel.transitionData = new ToPlayerActionTransitionDataClass(this._movingModel);
     return "PLAYERS_ACTIONS";
 };
 

@@ -2,12 +2,12 @@ let DeploymentCardsTypeUtilClass = require("../util/deploymentCardsTypesUtil.js"
 let LevelModelUtilClass = require("../util/levelModelUtil.js");
 
 // transitionData
-let SelectDeploymentForActionToPlayerActionTransitionDataClass = require("./transitions/SelectDeploymentForActionToPlayerActionTransitionData.js");
+let ToPlayerActionTransitionDataClass = require("./transitions/ToPlayerActionTransitionData.js");
 
 function onClick(x, y)
 {
     let model = this.levelModel.getGridContent(x, y).models[0];
-    this.gameModel.transitionData = new SelectDeploymentForActionToPlayerActionTransitionDataClass(model);
+    this.gameModel.transitionData = new ToPlayerActionTransitionDataClass(model);
 }
 
 function SelectDeploymentForActionState(models, views)

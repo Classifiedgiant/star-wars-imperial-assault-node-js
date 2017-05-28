@@ -1,6 +1,6 @@
 // transition
-let PlayerActionToMovePlayerTransitionDataClass = require("../state/transitions/playerActionToMovePlayerTransitionData.js");
-let PlayerActionToAttackRangeTransitionDataClass = require("../state/transitions/playerActionToAttackRangeTransitionData.js");
+let ToMovePlayerTransitionDataClass = require("../state/transitions/ToMovePlayerTransitionData.js");
+let ToAttackRangeTransitionDataClass = require("../state/transitions/ToAttackRangeTransitionData.js");
 
 // context
 let PlayerActionContextMenuViewClass = require("../view/playerActionContextMenuView.js");
@@ -17,16 +17,19 @@ function moveFigure()
     {
         return _.isEqual(cell.position, this.selectedPosition);
     }
+
+    this.selectedModel.descreaseActions();
     this.transition = "MOVE_MODEL";
     let selectedPosition = _.find(this.movementPositions, filterFunction, this);
-    this.gameModel.transitionData = new PlayerActionToMovePlayerTransitionDataClass(this.selectedModel, this.selectedPosition, selectedPosition.moveCount);
+    this.gameModel.transitionData = new ToMovePlayerTransitionDataClass(this.selectedModel, this.selectedPosition, selectedPosition.moveCount);
 }
 
 function attackEnemyAtPosition()
 {
+    this.selectedModel.descreaseActions();
     let enemy = this.levelModel.getGridContent(this.selectedPosition.x, this.selectedPosition.y);
     this.transition = "ATTACK_ENEMY_RANGED";
-    this.gameModel.transitionData = new PlayerActionToAttackRangeTransitionDataClass(this.selectedModel, enemy);
+    this.gameModel.transitionData = new ToAttackRangeTransitionDataClass(this.selectedModel, enemy);
 }
 
 function meleeEnemyAtPosition()
@@ -131,6 +134,11 @@ PlayerActionsState.prototype.start = function(transitionData)
 
 PlayerActionsState.prototype.update = function()
 {
+    if (this.selectedModel.actionCount() === 0)
+    {
+        return ;
+    }
+
     if (this.transition !== null)
     {
         return this.transition;
