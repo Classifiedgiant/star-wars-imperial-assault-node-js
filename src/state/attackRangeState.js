@@ -1,5 +1,5 @@
 //transition
-let AttackRangeStateToPlayerActionTransitionDataClass = require("./transitions/attackRangeToPlayerActionTransitionData.js");
+let ToPlayerActionTransitionDataClass = require("./transitions/ToPlayerActionTransitionData.js");
 
 // context
 let SurgeContextMenuView = require("../view/SurgeContextMenuView.js");
@@ -86,7 +86,7 @@ AttackRangeState.prototype.update = function()
             this._levelModel.removeModelFromGrid(this._target.models[0]);
         }
 
-        this._gameModel.transitionData = new AttackRangeStateToPlayerActionTransitionDataClass(this._selectedModel);
+        this._gameModel.transitionData = new ToPlayerActionTransitionDataClass(this._selectedModel);
         return "PLAYERS_ACTIONS";
     }
 
