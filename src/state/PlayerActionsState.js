@@ -1,6 +1,7 @@
 // transition
 let ToMovePlayerTransitionDataClass = require("../state/transitions/ToMovePlayerTransitionData.js");
 let ToAttackRangeTransitionDataClass = require("../state/transitions/ToAttackRangeTransitionData.js");
+let ToSwapArmyTransitionDataClass = require("../state/transitions/ToSwapArmyTransitionData.js");
 
 // context
 let PlayerActionContextMenuViewClass = require("../view/playerActionContextMenuView.js");
@@ -18,7 +19,7 @@ function moveFigure()
         return _.isEqual(cell.position, this.selectedPosition);
     }
 
-    this.selectedModel.descreaseActions();
+    this.selectedModel.decreaseActions();
     this.transition = "MOVE_MODEL";
     let selectedPosition = _.find(this.movementPositions, filterFunction, this);
     this.gameModel.transitionData = new ToMovePlayerTransitionDataClass(this.selectedModel, this.selectedPosition, selectedPosition.moveCount);
@@ -26,7 +27,7 @@ function moveFigure()
 
 function attackEnemyAtPosition()
 {
-    this.selectedModel.descreaseActions();
+    this.selectedModel.decreaseActions();
     let enemy = this.levelModel.getGridContent(this.selectedPosition.x, this.selectedPosition.y);
     this.transition = "ATTACK_ENEMY_RANGED";
     this.gameModel.transitionData = new ToAttackRangeTransitionDataClass(this.selectedModel, enemy);
@@ -65,7 +66,6 @@ function actionableCellSelected(x, y)
         );
     }
 }
-
 
 function GetAllEnemiesAttackableByMelee()
 {
@@ -134,9 +134,10 @@ PlayerActionsState.prototype.start = function(transitionData)
 
 PlayerActionsState.prototype.update = function()
 {
-    if (this.selectedModel.actionCount() === 0)
+    if (this.selectedModel.getActionCount() === 0)
     {
-        return ;
+        this.transition = "SWAP_ARMY";
+        //return ToSwapArmyTransitionDataClass();
     }
 
     if (this.transition !== null)

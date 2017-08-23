@@ -9,6 +9,7 @@ function DeploymentCardFigureModel(deploymentCard, position, isRotated, groupId)
     this.isRotated = true;
     this.currentSpeed = deploymentCard.baseSpeed;
     this.currentHealth = deploymentCard.baseHealth;
+    this.actionCount = 2;
     this.items = [];
 
     this.groupId = groupId;
@@ -70,6 +71,18 @@ DeploymentCardFigureModel.prototype.isDead = function()
 {
     return this.currentHealth <= 0;
 };
+
+DeploymentCardFigureModel.prototype.getActionCount = function() 
+{
+    return this.actionCount;
+};
+
+DeploymentCardFigureModel.prototype.decreaseActions = function() 
+{
+    this.actionCount--;
+    return (this.actionCount === 0);
+};
+
 
 
 module.exports = DeploymentCardFigureModel;

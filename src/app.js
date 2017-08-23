@@ -11,6 +11,7 @@ let PlayerActionStateClass = require("./state/playerActionsState.js");
 let SelectDeploymentForActionClass = require("./state/SelectDeploymentForActionState.js");
 let MovePlayerStateClass = require("./state/movePlayerState.js");
 let AttackRangeStateClass = require("./state/attackRangeState.js");
+let SwapArmyStateClass = require("./state/swapArmyState.js");
 
 function App(stage)
 {
@@ -26,7 +27,7 @@ function App(stage)
         LevelView: new LevelViewClass(this.models.LevelModel, stage)
     };
 }
-
+ 
 App.prototype.setupGame = function()
 {
     function createStates(self)
@@ -36,7 +37,8 @@ App.prototype.setupGame = function()
             SELECT_DEPLOYMENT_FOR_ACTIONS: new SelectDeploymentForActionClass(self.models, self.views), 
             PLAYERS_ACTIONS: new PlayerActionStateClass(self.stage, self.models, self.views.LevelView),
             MOVE_MODEL: new MovePlayerStateClass(self.models, self.views.LevelView),
-            ATTACK_ENEMY_RANGED: new AttackRangeStateClass(self.stage, self.models)
+            ATTACK_ENEMY_RANGED: new AttackRangeStateClass(self.stage, self.models),
+            SWAP_ARMY: new SwapArmyStateClass()
         };
     }
 
