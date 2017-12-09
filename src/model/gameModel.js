@@ -161,7 +161,6 @@ GameModel.prototype.removeDeadModel = function(model)
             this.empire.victoryPoints += model.deploymentCard.deployCost;
         else if (this.currentSide === DeploymentCardsTypeUtilClass.getAffiliations().REBEL)
             this.rebel.victoryPoints += model.deploymentCard.deployCost;
-
         else 
             console.log("GameModel.removeDeadModel: unknown model affiliation");
     }

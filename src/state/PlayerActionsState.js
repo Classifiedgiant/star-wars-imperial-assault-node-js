@@ -134,9 +134,10 @@ PlayerActionsState.prototype.start = function(transitionData)
 
 PlayerActionsState.prototype.update = function()
 {
-    if (this.selectedModel.getActionCount() === 0)
+    if (this.selectedModel.getActionCount() === 0 && this.transition === null)
     {
         this.transition = "SWAP_ARMY";
+        console.log("Ran out of Actions!!!");
         //return ToSwapArmyTransitionDataClass();
     }
 
@@ -212,7 +213,7 @@ PlayerActionsState.prototype.calculateAttackActions = function()
         }
         else
         {
-            attackableEnemies.push({enemy:rangeEnemies[i], canRange: true,});
+            attackableEnemies.push({enemy:rangeEnemies[i], canRange: true});
         }
     }
 
