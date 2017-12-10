@@ -9,12 +9,17 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-react": "^6.24.1",
+    "babelify": "^8.0.0",
     "browserify": "^14.0.0",
     "grunt": "^1.0.1",
     "grunt-browserify": "^5.0.0",
     "grunt-cli": "^1.2.0",
     "grunt-contrib-jshint": "^1.1.0",
     "pixi.js": "^4.3.4",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "underscore": "^1.8.3"
   }
 }

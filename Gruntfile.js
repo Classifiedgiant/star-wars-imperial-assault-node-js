@@ -18,23 +18,25 @@ module.exports = function(grunt)
 			{
 				files:
 				{
-					"./build/main.js": ["./src/**/*.js", "./external/**/*.js"]
+					"./build/main.js": ["./src/**/*.js", "./external/**/*.js", "./src/**/*.jsx", "./external/**/*.jsx"]
 				},
 				options:
 				{
+					transform : [
+						['babelify', {presets: ['react']}]
+					],
 					browserifyOptions:
 					{
 						debug: true
 					}
 				}
 			}
+		},
 
-		}
 	});
 
 	grunt.loadNpmTasks("grunt-contrib-jshint")
 	grunt.loadNpmTasks("grunt-browserify")
 
 	grunt.registerTask("default", ["jshint","browserify"])
-
 };
