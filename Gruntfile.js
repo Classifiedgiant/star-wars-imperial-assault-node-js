@@ -40,6 +40,7 @@ module.exports = function(grunt)
 				},
 				files: [
 					{expand: true, src: ["./build/**"], dest: "<%= globalConfig.serverDir %>/"},
+					{expand: true, src: ["./external/**"], dest: "<%= globalConfig.serverDir %>/"},
 					{src: "./index.html", dest: '<%= globalConfig.serverDir %>/index.html'}
 				]
 			}
